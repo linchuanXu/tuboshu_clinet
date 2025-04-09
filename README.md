@@ -20,6 +20,10 @@ rm -rf ~/Library/Caches/tuboshu
 pnpm start
 
 
+git tag v1.0.0 
+git push origin v1.0.0 
+
+
 
 <p align="center">
     <img src="https://github.com/user-attachments/assets/578f95c0-882f-4f31-b5ab-f6b7228b2927" width=138/>
