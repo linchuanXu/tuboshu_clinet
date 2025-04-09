@@ -4,10 +4,13 @@
 
 pnpm install
 
+npm config set registry https://registry.npmmirror.com/
+pnpm config set registry https://registry.npmmirror.com/
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=http://127.0.0.1:7890
 
-
-
-
+pnpm start
 
 
 

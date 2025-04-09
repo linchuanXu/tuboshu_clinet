@@ -3,7 +3,7 @@ import CONS from './constants.js'
 import windowManager from './windowManager.js'
 
 function createTray() {
-    const tray = new Tray(CONS.PATH.APP_PATH + '/icon.ico');
+    const tray = new Tray(CONS.PATH.APP_PATH + '/icon.png');
     const contextMenu = Menu.buildFromTemplate([
         { label: '官网', type: 'normal', click:openWebsite},
         //{ label: '当前版本', type: 'normal' },
