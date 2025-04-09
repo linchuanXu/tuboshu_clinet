@@ -15,6 +15,8 @@ pnpm build -->
 
 pnpm build
 rm -f "/Users/xuchangan/Library/Application Support/tuboshu/data.db"
+rm -rf ~/Library/Caches/tuboshu
+
 pnpm start
 
 
