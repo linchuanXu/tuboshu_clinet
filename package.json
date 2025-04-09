@@ -11,7 +11,7 @@
   },
   "author": {
     "name": "deepshit2025",
-    "email": "lyf200@qq.com"
+    "email": "1231123@qq.com"
   },
   "license": "ISC",
   "description": "tuboshu",
@@ -70,6 +70,9 @@
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
       "installerHeaderIcon": "icon.ico"
+    },
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
     }
   }
 }

@@ -10,8 +10,12 @@ export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
 export http_proxy=http://127.0.0.1:7890
 export https_proxy=http://127.0.0.1:7890
 
-pnpm start
+<!-- rm -rf node_modules/.cache
+pnpm build -->
 
+pnpm build
+rm -f "/Users/xuchangan/Library/Application Support/tuboshu/data.db"
+pnpm start
 
 
 

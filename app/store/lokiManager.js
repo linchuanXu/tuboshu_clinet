@@ -5,6 +5,7 @@ import Loki from 'sylviejs'
 import CONS from '../constants.js'
 
 const dbPath = path.join(app.getPath('userData'),  'data.db');
+console.log('Database Path:', dbPath);
 const md5Hash = (data) => crypto.createHash('md5').update(data).digest('hex');
 const processImg = (menuArray) => menuArray.map(element => {
     if(element.img.startsWith("data:")) return element;

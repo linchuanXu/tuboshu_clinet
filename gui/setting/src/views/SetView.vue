@@ -273,7 +273,8 @@ const handleWinChange = (e) => {
           当前版本: <n-tag :bordered="false" type="info" size="medium">{{version.version}}</n-tag>
         </span>
       <span>
-          获取新版：<n-tag :bordered="false" type="info" size="medium"><a target="_blank" href="https://github.com/deepshit2025/tuboshu/releases">点击下载</a></n-tag>
+          #TODO: mine
+          获取新版：<n-tag :bordered="false" type="info" size="medium"><a target="_blank" href="https://mindcryst.com">点击下载</a></n-tag>
         </span>
     </n-card>
   </div>
