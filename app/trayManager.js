@@ -12,14 +12,14 @@ class TrayManager {
     }
 
     createTray() {
-        const iconFile = process.platform === 'darwin' ? 'build/linux_icon.png' : 'icon.ico';
-        const iconPath = path.join(CONS.PATH.APP_PATH, iconFile);
+        const iconFile = app.isMac ? 'build/linux_icon.png' : 'icon.ico';
+        const iconPath = path.join(CONS.APP.PATH, iconFile);
 
         this.tray = new Tray(iconPath);
         this.tray.setToolTip("土拨鼠");
         this.updateMenu();
 
-        if (process.platform === 'darwin') {
+        if (app.isMac) {
             this.tray.on('right-click', () => this.tray.popUpContextMenu());
         } else {
             this.tray.on('click', () => this.toggleWindow());
@@ -58,13 +58,13 @@ class TrayManager {
     }
 
     toggleWindow() {
-        let win = windowManager.getWindow();
+        const win = windowManager.getWindow();
         if(win.isVisible()){
             win.hide();
-            app.dock?.hide();
+            if(app.isMac) app.dock.hide();
         }else{
             win.show();
-            app.dock?.show();
+            if(app.isMac) app.dock.show().catch(err => console.error(err));
         }
     }
 

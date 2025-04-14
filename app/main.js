@@ -3,6 +3,7 @@ import path from 'path'
 import windowManager from './windowManager.js'
 import trayManager from'./trayManager.js'
 import shortcutManager from './shortcut/shortcutManager.js'
+import contextManager from "./context/contextManager.js"
 
 // app.disableHardwareAcceleration();
 //app.commandLine.appendSwitch('disable-gpu');
@@ -23,13 +24,16 @@ if(process.env.PORTABLE_EXECUTABLE_DIR){
 }
 
 app.isQuitting = false;
-const singleLock = app.requestSingleInstanceLock();
+app.isMac = (process.platform === 'darwin');
+app.singleLock = app.requestSingleInstanceLock();
 
 app.whenReady().then(() => {
-  if (!singleLock) return app.quit();
+  if (!app.singleLock) return app.quit();
+
   windowManager.createWindow();
   trayManager.createTray();
   shortcutManager.initShortcuts();
+  contextManager.createContextMenu();
 })
 
 
@@ -46,7 +50,7 @@ app.on('will-quit', () => {
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform === 'darwin') app.dock.hide();
+  if (app.isMac) app.dock.hide();
   else app.quit();
 })
 

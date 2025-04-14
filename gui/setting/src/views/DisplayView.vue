@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import draggable from "vuedraggable"
+const message = useMessage();
 
 const list1 = ref(null);
 const list2 = ref(null);
@@ -11,20 +12,18 @@ onMounted(async () => {
   list2.value = config.closeMenus;
 });
 
-function updateOpenMenu(evt) {
-
-  const plainList1 = JSON.parse(JSON.stringify(list1.value));
-  //const plainList2 = JSON.parse(JSON.stringify(list2.value));
-  plainList1.forEach(item => {
-    item.order = plainList1.indexOf(item) + 1;
-  });
-  window.myApi.batchMenus(plainList1);
+const updateOpenMenu = async (e) => {
+  try{
+    const plainList1 = JSON.parse(JSON.stringify(list1.value));
+    plainList1.forEach(item => {
+      item.order = plainList1.indexOf(item) + 1;
+    });
+    await window.myApi.batchMenus(plainList1);
+  }catch (error){
+    message.error("操作失败:"+error);
+  }
 }
 
-function updateCloseMenu(evt) {
-  //const plainList = JSON.parse(JSON.stringify(list2.value));
-  //window.myApi.updateMenu(plainList, "closeMenu");
-}
 </script>
 
 <template>
@@ -53,21 +52,6 @@ function updateCloseMenu(evt) {
         </template>
       </draggable>
     </div>
-
-    <!-- <div class="box">
-      <h3>隐藏区</h3>
-      <draggable
-          class="list-group close-area"
-          :list="list2"
-          group="people"
-          @change="updateCloseMenu"
-          itemKey="name"
-      >
-        <template #item="{ element, index }">
-          <AiItem :element="element" />
-        </template>
-      </draggable>
-    </div> -->
   </n-flex>
   </div>
 </template>

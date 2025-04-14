@@ -14,7 +14,6 @@ const fingerPrint = JSON.parse(index !== -1 ? args[index + 2] : null);
 //     platform: {get:()=> fingerPrint.navigator.platform}
 // })
 
-
 (async ()=>{
     await webFrame.executeJavaScript(`
 Object.defineProperties(screen, {
@@ -57,14 +56,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     `);
 })
 
-
 contextBridge.exposeInMainWorld('myApi', {
-    refreshSelf: () => ipcRenderer.invoke('refresh:self')
+    refreshSelf:() => ipcRenderer.invoke('refresh:self')
 })
+
 ipcRenderer.on('open:window', (event, url) => {
     window.location.href = url;
 });
-
 
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -74,6 +72,7 @@ window.addEventListener('contextmenu', (e) => {
     }else{
         ipcRenderer.send('copy:text', window.location.href)
     }
+    ipcRenderer.send("popup:contextMenu", {Xpos: e.clientX, Ypos: e.clientY})
 });
 
 window.addEventListener('keydown', (event) => {
@@ -85,9 +84,9 @@ window.addEventListener('keydown', (event) => {
     }
 
     if(event.key === "ArrowLeft"){
-        history.back();
+        ipcRenderer.send('history:goBack')
     }else if (event.key === "ArrowRight"){
-        history.forward();
+        ipcRenderer.send('history:goForward')
     }
 });
 

@@ -5,15 +5,17 @@ import {app} from "electron";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =  path.dirname(__filename);
 
+const appPath = path.join(__dirname, '..');
 const SETTING_URL = app.isPackaged
-    ? `file://${path.join(__dirname, '..', 'gui/dist/index.html')}`
+    ? `file://${path.join(appPath, 'gui/dist/index.html')}`
     : 'http://localhost:5173/';
 
 export default Object.freeze({
-    SIZE: {
-        HEIGHT:768,
-        WIDTH: 1024,
-        MENU_WIDTH: 50
+    APP:{
+        PATH: appPath,
+        PREVIEW_IMG: "/gui/static/images/logo/preview_default.png",
+        CLOSE_SITE_NAME :'close_site_url',
+        CLOSE_SITE_URL :'file://' + path.join(appPath,'/gui/black.html'),
     },
     CONFIG: {
         defaultWindowSize : {
@@ -27,13 +29,10 @@ export default Object.freeze({
         isMenuVisible:1,
         isOpenDevTools:0,
         isOpenZoom:1,
+        isOpenContextMenu:1,
         systemTheme:'system'
     },
 
-    PATH: {
-        APP_PATH: path.join(__dirname, '..'),
-    },
-    PREVIEW_IMG: "/gui/static/images/logo/preview_default.png",
     SETTING:[
         {
             tag: "设置",

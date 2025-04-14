@@ -1,4 +1,4 @@
-import { app, BaseWindow, View, screen, ipcMain, clipboard, WebContentsView, nativeTheme } from 'electron'
+import {app, BaseWindow, View, screen, ipcMain, clipboard, WebContentsView, nativeTheme, Menu} from 'electron'
 import viewManager from './viewManager.js'
 import lokiManager from './store/lokiManager.js'
 import storeManager from './store/storeManager.js'
@@ -29,14 +29,13 @@ class WindowManager{
     }
 
     createWindow() {
-        
         const winSize = Layout.getWinSize();
         const win = new BaseWindow({
             width: winSize.width,
             height: winSize.height,
             autoHideMenuBar: true,
             show:false,
-            icon: CONS.PATH.APP_PATH+'/icon.ico',
+            icon: CONS.APP.PATH+'/icon.ico',
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true,
@@ -49,14 +48,15 @@ class WindowManager{
                 nodeIntegration: false,
                 contextIsolation: true,
                 devTools: true,
-                preload: CONS.PATH.APP_PATH +'/app/preload/navigate.js'
+                preload: CONS.APP.PATH +'/app/preload/navigate.js'
             }
         });
 
         const layout = Layout.getLayout(win)
         menuView.setBounds(layout.menu)
         menuView.webContents.loadFile('gui/index.html').then(()=>{
-            this.gotoSetting();
+            // this.gotoSetting();
+            this.afterCloseSitePage();
         })
 
         const webView = new View();
@@ -149,7 +149,7 @@ class WindowManager{
             this.window.setTitle(data);
         });
 
-        ipcMain.on('reload:url', (event, url, name) => {
+        ipcMain.on('open:url', (event, url, name) => {
             let view = viewManager.createNewView(url, name)
             if(view !== null){
                 const layout = Layout.getLayout(this.window)
@@ -187,7 +187,7 @@ class WindowManager{
         });
 
         //批量更新排序
-        ipcMain.on('batch:menus', async (event, menus) => {
+        ipcMain.handle('batch:menus', async (event, menus) => {
             const manager = await lokiManager;
             manager.batchUpdateSite(menus);
             this.closeHideSites();
@@ -288,11 +288,11 @@ class WindowManager{
             this.handleResize();
         });
 
-        //窗口准备销毁，阻止默认事件
         this.window.on('close', (e) => {
             if(app.isQuitting === false){
                 e.preventDefault();
                 this.window.hide();
+                app.dock?.hide();
             }
         })
 
@@ -369,6 +369,12 @@ class WindowManager{
             }
         })
     }
+
+    afterCloseSitePage() {
+        const site = {url:CONS.APP.CLOSE_SITE_URL,  name:CONS.APP.CLOSE_SITE_NAME};
+        this.menuView.webContents.send('auto:click', site);
+    }
+
 
     uselessSiteCleaner(){
         const res = storeManager.getSetting('isMemoryOptimizationEnabled');

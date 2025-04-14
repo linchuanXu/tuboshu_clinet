@@ -78,8 +78,9 @@ class ShortcutManager{
         if(shortcutBase.isRegistered(shortcut.cmd)){
             return false;
         }
+
         shortcutBase.unregister(oldShortcut.cmd)
-        shortcutBase.register(shortcut.cmd, this[shortcut.name].bind(this))
+        shortcutBase.register(shortcut.cmd, this[shortcut.name].bind(this), shortcut.isGlobal)
         return true;
     }
 

@@ -81,9 +81,9 @@ class ShortcutBase {
      * 重新构建菜单（包含所有局部快捷键）
      */
     _rebuildMenu() {
-        const template = []
+       const template = []
 
-       if (process.platform === 'darwin') {
+       if (app.isMac) {
             template.push({
                 label: app.name,
                 submenu: [
@@ -129,7 +129,7 @@ class ShortcutBase {
         })
 
         template.push(fileMenu, editMenu, shortcutsMenu)
-       if (process.platform === 'darwin') {
+       if (app.isMac) {
             template.push({
                 role: 'window',
                 submenu: [

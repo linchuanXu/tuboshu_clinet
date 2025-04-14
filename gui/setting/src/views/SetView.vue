@@ -9,6 +9,7 @@ const leftMenuPosition = ref('left')
 const isMenuVisible = ref(true)
 const isOpenDevTools = ref(false)
 const isOpenZoom = ref(true)
+const isOpenContextMenu = ref(true)
 const defaultWindowSize = ref({width: 800, height: 600})
 
 const version = ref({
@@ -62,6 +63,7 @@ onMounted(async () => {
   isMenuVisible.value = getValue('isMenuVisible', settings);
   isOpenDevTools.value = getValue('isOpenDevTools', settings);
   isOpenZoom.value = getValue('isOpenZoom', settings);
+  isOpenContextMenu.value = getValue('isOpenContextMenu', settings);
   defaultWindowSize.value = getValue('defaultWindowSize', settings);
 })
 
@@ -91,6 +93,11 @@ const changeDevTools = (val) => {
 
 const changeZoom= (val) => {
   window.myApi.updateSetting({ name : 'isOpenZoom', value: val ? 1 : 0});
+  message.success(`设置已更新,请重新启动`)
+}
+
+const changeContextMenu= (val) => {
+  window.myApi.updateSetting({ name : 'isOpenContextMenu', value: val ? 1 : 0});
   message.success(`设置已更新,请重新启动`)
 }
 
@@ -216,6 +223,18 @@ const handleWinChange = (e) => {
                       v-model:value="isOpenZoom"
                       @update:value="changeZoom" style="font-size:12px;" >
               <template #checked>开启</template>
+              <template #unchecked>关闭</template>
+            </n-switch>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="vleft">右键菜单：</div>
+          <div class="vright">
+            <n-switch size="medium"
+                      v-model:value="isOpenContextMenu"
+                      @update:value="changeContextMenu" style="font-size:12px;" >
+              <template #checked>显示</template>
               <template #unchecked>关闭</template>
             </n-switch>
           </div>

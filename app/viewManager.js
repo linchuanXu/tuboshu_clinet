@@ -1,4 +1,4 @@
-import {WebContentsView, shell, session, ipcMain} from 'electron'
+import {WebContentsView, session} from 'electron'
 import eventManager from './eventManager.js'
 import lokiManager from './store/lokiManager.js'
 import CONS from './constants.js'
@@ -23,23 +23,28 @@ class ViewManager {
         return false;
     }
 
-    removeView(name) {
-        for (let i = 0; i < this.views.length; i++) {
-            if (this.views[i].name === name.toLowerCase()) {
-                this.views.splice(i, 1);
-                return true;
-            }
+    closeView(name) {
+        const index = this.views.findIndex(view =>
+            view.name === name.toLowerCase()
+        );
+        if (index === -1) return false;
+
+        const closedView = this.views.splice(index, 1)[0];
+        if (closedView.object.webContents && !closedView.object.webContents.isDestroyed()) {
+            closedView.object.webContents.close();
+            closedView.object = null;
         }
-        return false;
+
+        return true;
     }
 
     refreshActiveView(){
         const activeView = this.getActiveView();
-        if(!activeView.url.toLowerCase().startsWith("http")) return;
-
+        //if(!activeView.url.toLowerCase().startsWith("http")) return;
         Utility.loadWithLoading(activeView.object, activeView.url).then(()=>{
             eventManager.emit('set:title', activeView.object.webContents.getTitle());
         }).catch((error)=>{
+            console.log('error', error);
             setTimeout(()=> this.refreshActiveView(), 1000)
         })
     }
@@ -65,10 +70,16 @@ class ViewManager {
     createNewView(url, name) {
         if (this.isExist(name)) {
             const activeView = this.getActiveView();
-            if(activeView.name === name){
+            this.activeView(name);
+
+            if(activeView?.name === name){
                 this.refreshActiveView();
-            }else{
-                this.activeView(name)
+                return null;
+            }
+
+            if(CONS.APP.CLOSE_SITE_NAME === name){
+                this.refreshActiveView();
+                return null;
             }
             return null;
         }
@@ -90,7 +101,7 @@ class ViewManager {
                 dnsPrefetch: false,
                 partition: partitionName,
                 additionalArguments: ['--name', JSON.stringify(fingerprint)],
-                preload: CONS.PATH.APP_PATH + '/app/preload/'+ preloadjs
+                preload: CONS.APP.PATH + '/app/preload/'+ preloadjs
         }})
 
         this.renderProcessGone(view);

@@ -1,8 +1,7 @@
 import { readFile, readdir } from 'fs/promises';
 import { URL, fileURLToPath } from 'url'
 import path from 'path'
-import requestJson from './requestTool.js'
-
+import requestJson from './request.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname =  path.dirname(__filename);
@@ -28,7 +27,6 @@ class Utility {
         const res =  await requestJson({url:versionUrl})
         return res.data;
     }
-
 
     static async loadExtensions(view) {
         const sess = view.webContents.session;

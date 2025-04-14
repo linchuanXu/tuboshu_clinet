@@ -8,9 +8,9 @@ const dbPath = path.join(app.getPath('userData'),  'data.db');
 const md5Hash = (data) => crypto.createHash('md5').update(data).digest('hex');
 const processImg = (menuArray) => menuArray.map(element => {
     if(element.img.startsWith("data:")) return element;
-    if(element.img.includes("preview_default")) element.img = CONS.PREVIEW_IMG;
+    if(element.img.includes("preview_default")) element.img = CONS.APP.PREVIEW_IMG;
 
-    const imagePath = CONS.PATH.APP_PATH +""+ element.img;
+    const imagePath = CONS.APP.PATH +""+ element.img;
     const Img = nativeImage.createFromPath(imagePath);
     return { ...element, img: Img.toDataURL()};
 });
