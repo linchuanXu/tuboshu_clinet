@@ -62,20 +62,26 @@ const changeSwitch = (val)=>{
 
 const handleClickGetIcon = ()=>{
   if(icon.value.endsWith('ZP8EQEcFCACPFvgAAAAASUVORK5CYII=')){
-    svgIcon.value?.classList.add('svg-element');
     window.myApi.getFavicon(props.element.name).then((res)=>{
         if(res.ret === 0){
           icon.value = res.data;
           message.success('获取成功')
-          svgIcon.value?.classList.remove('svg-element');
+          stopAnimation()
         }else{
           message.error(res.data)
-          svgIcon.value?.classList.remove('svg-element');
+          stopAnimation()
         }
       }
     )
   }else{
     message.info('已存在图标,无需获取')
+    stopAnimation()
+  }
+}
+
+const stopAnimation = ()=>{
+  if(svgIcon.value){
+    svgIcon.value.stopAnimation()
   }
 }
 
@@ -92,7 +98,7 @@ const handleClickGetIcon = ()=>{
 
     <div class="getIcon">
       <span @click="handleClickGetIcon">
-        <n-icon size="30"> <iconRefresh /></n-icon>
+        <n-icon size="30"> <iconRefresh ref="svgIcon" /></n-icon>
       </span>
     </div>
 
@@ -189,14 +195,4 @@ const handleClickGetIcon = ()=>{
 .wrap:hover {
   background-color: var(--color-background-soft);
 }
-
-.svg-element {
-  animation: rotate 2s linear infinite;
-  transform-origin: center;
-}
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 </style>

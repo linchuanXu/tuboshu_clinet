@@ -23,14 +23,15 @@ export default Object.freeze({
             height: 768,
         },
         defaultMenuWidth: 50,
-        leftMenuPosition:'left',
         isWindowEdgeAdsorption: 1,
         isMemoryOptimizationEnabled:1,
         isMenuVisible:1,
         isOpenDevTools:0,
         isOpenZoom:1,
         isOpenContextMenu:1,
-        systemTheme:'system'
+        leftMenuPosition:'left',
+        systemTheme:'system',
+        howLinkOpenMethod:"tuboshu"
     },
 
     SETTING:[

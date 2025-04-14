@@ -1,10 +1,10 @@
-import {WebContentsView, session} from 'electron'
+import {WebContentsView, session, shell} from 'electron'
 import eventManager from './eventManager.js'
 import lokiManager from './store/lokiManager.js'
-import CONS from './constants.js'
 import fingerPrint from "./disguise/fingerPrint.js";
-import Utility from "./utility/utility.js";
 import storeManager from "./store/storeManager.js";
+import CONS from './constants.js'
+import Utility from "./utility/utility.js";
 
 class ViewManager {
     constructor() {
@@ -126,13 +126,16 @@ class ViewManager {
                 view.webContents.send('open:window', details.url)
                 return { action: 'deny' };
             }
-            //shell.openExternal(details.url).finally();
-            return {action: 'allow', overrideBrowserWindowOptions: {autoHideMenuBar: true}};
+
+            if(storeManager.getSetting('howLinkOpenMethod') === "tuboshu"){
+                return {action: 'allow', overrideBrowserWindowOptions: {autoHideMenuBar: true}};
+            }
+
+            shell.openExternal(details.url).finally();
+            return { action: 'deny' };
         })
 
-        this.views.forEach(view => {
-           view.object.setVisible(false)
-        })
+        this.views.forEach(view => {view.object.setVisible(false)})
 
         this.addView({
             name: name.toLowerCase(),
@@ -170,7 +173,6 @@ class ViewManager {
             if (!view.webContents.isDestroyed()) view.webContents.reload();
         });
     }
-
 }
 
 export default new ViewManager();

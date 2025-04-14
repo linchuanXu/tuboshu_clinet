@@ -11,9 +11,9 @@ class ContextManager {
     }
 
     createContextMenu() {
-        ipcMain.on('popup:contextMenu', (e, {posX, posY}) => {
+        ipcMain.on('popup:contextMenu', (e, pos) => {
             if(storeManager.getSetting('isOpenContextMenu')){
-                this.popupContextMenu(posX, posY);
+                this.popupContextMenu(pos.x, pos.y, pos.copy);
             }
         })
 
@@ -31,29 +31,38 @@ class ContextManager {
             this.goHome();
         })
     }
-    popupContextMenu(posX, posY) {
+    popupContextMenu(posX, posY, copy) {
         this.clearUselessHistoryRecord();
         const win = windowManager.getWindow();
         const view = viewManager.getActiveView();
         const history = view.object.webContents.navigationHistory;
 
         const template = [];
-        if(history.canGoBack()){
-            template.push({ label: '后退', click: () => this.goBack()})
+
+        if(copy === false){
+            if(history.canGoBack()){
+                template.push({ label: '后退', click: () => this.goBack()})
+            }
+
+            if(history.canGoForward()){
+                template.push({ label: '前进', click: () => this.goForward()})
+            }
+
+            template.push({ label: '刷新', click: () => this.reload()})
+            template.push({ label: '关闭', click: () => this.closeView()})
+            template.push({ label: '全屏', role: 'togglefullscreen' })
+
+            // if(history.length() > 1){
+            //     template.push({ label: '主页', click: () => this.goHome()})
+            // }
+            //template.push({ type: 'separator' })
+            //template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
+        }else{
+            template.push({ label: '复制', role: 'copy' })
+            template.push({ label: '剪贴', role: 'cut' })
+            template.push({ label: '全选', role: 'selectAll' })
         }
 
-        if(history.canGoForward()){
-            template.push({ label: '前进', click: () => this.goForward()})
-        }
-
-        template.push({ label: '刷新', click: () => this.reload()})
-        template.push({ label: '关闭', click: () => this.closeView()})
-
-        // if(history.length() > 1){
-        //     template.push({ label: '主页', click: () => this.goHome()})
-        // }
-        //template.push({ type: 'separator' })
-        //template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
 
         this.contextMenu = Menu.buildFromTemplate(template)
         this.contextMenu.popup({ window:win, x:posX, y:posY})

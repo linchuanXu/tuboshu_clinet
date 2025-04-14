@@ -69,10 +69,12 @@ window.addEventListener('contextmenu', (e) => {
     const selectionText = window.getSelection().toString().trim();
     if (selectionText) {
         ipcRenderer.send('copy:text', selectionText)
+        ipcRenderer.send("popup:contextMenu", {x: e.clientX, y: e.clientY, copy:true})
     }else{
         ipcRenderer.send('copy:text', window.location.href)
+        ipcRenderer.send("popup:contextMenu", {x: e.clientX, y: e.clientY, copy:false})
     }
-    ipcRenderer.send("popup:contextMenu", {Xpos: e.clientX, Ypos: e.clientY})
+
 });
 
 window.addEventListener('keydown', (event) => {

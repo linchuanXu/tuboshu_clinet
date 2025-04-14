@@ -6,6 +6,7 @@ const isEdgeAdsorption = ref(false)
 const isMemoryOptimizationEnabled = ref(false)
 const systemTheme = ref("system")
 const leftMenuPosition = ref('left')
+const howLinkOpenMethod = ref('tuboshu')
 const isMenuVisible = ref(true)
 const isOpenDevTools = ref(false)
 const isOpenZoom = ref(true)
@@ -19,29 +20,17 @@ const version = ref({
 })
 
 const themes = [
-  {
-    label: '跟随系统',
-    value: 'system'
-  },
-  {
-    label: '普通模式',
-    value: 'light'
-  },
-  {
-    label: '深度模式',
-    value: 'dark'
-  }
+  {label: '跟随系统', value: 'system'},
+  {label: '普通模式', value: 'light'},
+  {label: '深度模式', value: 'dark'}
 ]
-
 const leftMenu = [
-    {
-      label: '左侧',
-      value: 'left'
-    },
-    {
-      label: '右侧',
-      value: 'right'
-    }
+    {label: '左侧', value: 'left'},
+    {label: '右侧', value: 'right'}
+]
+const linkOpenMethod = [
+  {label: 'Tuboshu弹窗', value: 'tuboshu'},
+  {label: '默认浏览器', value: 'browser'}
 ]
 
 
@@ -65,6 +54,7 @@ onMounted(async () => {
   isOpenZoom.value = getValue('isOpenZoom', settings);
   isOpenContextMenu.value = getValue('isOpenContextMenu', settings);
   defaultWindowSize.value = getValue('defaultWindowSize', settings);
+  howLinkOpenMethod.value = getValue('howLinkOpenMethod', settings);
 })
 
 
@@ -108,6 +98,11 @@ const changeTheme = (e) => {
 
 const changeMenuPos = (e) => {
   window.myApi.updateSetting({ name : 'leftMenuPosition', value:e.target.value});
+  message.success(`设置已更新,请重新启动`)
+}
+
+const changeLinkOpenMethod = (e) => {
+  window.myApi.updateSetting({ name : 'howLinkOpenMethod', value:e.target.value});
   message.success(`设置已更新,请重新启动`)
 }
 
@@ -260,6 +255,22 @@ const handleWinChange = (e) => {
                  v-model:value="leftMenuPosition" name="menuPoss" style="font-size: 12px;">
               <n-radio-button
                   v-for="item in leftMenu"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"
+              />
+            </n-radio-group>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="vleft">外部链接：</div>
+          <div class="vright">
+            <n-radio-group size="small"
+                 @change="changeLinkOpenMethod"
+                 v-model:value="howLinkOpenMethod" name="openLink" style="font-size: 12px;">
+              <n-radio-button
+                  v-for="item in linkOpenMethod"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
