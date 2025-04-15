@@ -28,8 +28,8 @@ class LokiManager {
                 autoloadCallback: () => {
                     resolve(dbInstance);
                 },
-                autosave: true,
-                autosaveInterval: 5000,
+                autosave: false,
+                //autosaveInterval: 1000,
             });
         });
 
