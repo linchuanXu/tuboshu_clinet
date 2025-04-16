@@ -80,7 +80,7 @@ class LokiManager {
     addSite(site) {
         const sitesCollection = this.db.getCollection('sites');
         site.order = sitesCollection.count() + 1;
-        site.name = md5Hash(site.name.trim()+""+ Date.now());
+        site.name = md5Hash(site.name+String(Date.now()));
         sitesCollection.insert(site);
         this.db.saveDatabase();
         return site;
@@ -167,6 +167,7 @@ class LokiManager {
                 doc.isOpen = false;
                 groupsCollection.update(doc)
             })
+            this.db.saveDatabase();
         }
         groupsCollection.findAndUpdate({name: group.name}, (doc)=>{Object.assign(doc, group)});
         return this.db.saveDatabase();
@@ -184,6 +185,7 @@ class LokiManager {
             doc.isOpen = false;
             groupsCollection.update(doc)
         })
+        this.db.saveDatabase();
     }
 
     removeGroup(group) {

@@ -16,6 +16,10 @@ export default Object.freeze({
         PREVIEW_IMG: "/gui/static/images/logo/preview_default.png",
         CLOSE_SITE_NAME :'close_site_url',
         CLOSE_SITE_URL :'file://' + path.join(appPath,'/gui/black.html'),
+        VIEW_TYPE :{
+            SINGLE:'single',
+            MULTI:'multiple'
+        }
     },
     CONFIG: {
         defaultWindowSize : {

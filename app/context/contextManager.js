@@ -1,4 +1,4 @@
-import {Menu, ipcMain} from 'electron'
+import {Menu, ipcMain, clipboard} from 'electron'
 import windowManager from './../windowManager.js'
 import viewManager from "./../viewManager.js";
 import storeManager from "../store/storeManager.js";
@@ -13,7 +13,7 @@ class ContextManager {
     createContextMenu() {
         ipcMain.on('popup:contextMenu', (e, pos) => {
             if(storeManager.getSetting('isOpenContextMenu')){
-                this.popupContextMenu(pos.x, pos.y, pos.copy);
+                this.popupContextMenu(pos.x, pos.y, pos.copy, pos.paste);
             }
         })
 
@@ -31,7 +31,7 @@ class ContextManager {
             this.goHome();
         })
     }
-    popupContextMenu(posX, posY, copy) {
+    popupContextMenu(posX, posY, isCopy, isPaste) {
         this.clearUselessHistoryRecord();
         const win = windowManager.getWindow();
         const view = viewManager.getActiveView();
@@ -39,7 +39,7 @@ class ContextManager {
 
         const template = [];
 
-        if(copy === false){
+        if(isCopy === false){
             if(history.canGoBack()){
                 template.push({ label: '后退', click: () => this.goBack()})
             }
@@ -58,8 +58,12 @@ class ContextManager {
             //template.push({ type: 'separator' })
             //template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
         }else{
+            if(isPaste === true && this.isClipboardEmpty() === false){
+                template.push({ label: '粘贴', role: 'paste' })
+                //template.push({ label: '剪贴', role: 'cut' })
+            }
+
             template.push({ label: '复制', role: 'copy' })
-            template.push({ label: '剪贴', role: 'cut' })
             template.push({ label: '全选', role: 'selectAll' })
         }
 
@@ -110,6 +114,12 @@ class ContextManager {
         viewManager.closeView(view.name)
         windowManager.afterCloseSitePage();
     }
+
+    isClipboardEmpty() {
+        const text = clipboard.readText();
+        return text.trim() === '';
+    }
+
 
 
 }

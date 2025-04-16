@@ -149,13 +149,14 @@ class WindowManager{
             this.window.setTitle(data);
         });
 
-        ipcMain.on('open:url', (event, url, name) => {
-            let view = viewManager.createNewView(url, name)
-            if(view !== null){
-                const layout = Layout.getLayout(this.window)
-                view.setBounds(layout.view)
-                this.webView.addChildView(view)
-            }
+        eventManager.on('layout:resize', (data) => {
+            const layout = Layout.getLayout(this.window)
+            data.view.object.setBounds(layout.view)
+            this.webView.addChildView(data.view.object)
+        })
+
+        ipcMain.on('open:url', (event, site) => {
+            viewManager.createNewView(site.url, site.name)
         })
 
         ipcMain.on('open:site', (event, site) => {
@@ -387,9 +388,9 @@ class WindowManager{
                 if(currentView.name === view.name) return true;
 
                 const notInMenu = !urls.includes(view.url);
-                const overOneHour = (Date.now() / 1000 - view.time) > 600;
+                const overTime = Math.floor((Date.now() - view.time) / 1000) > 600;
 
-                if (notInMenu || overOneHour) {
+                if (notInMenu || overTime) {
                     view.object.webContents.close();
                     this.webView.removeChildView(view.object);
                     return false;

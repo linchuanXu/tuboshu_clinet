@@ -10,17 +10,12 @@ class ViewManager {
     constructor() {
         this.views = [];
     }
-    addView(view) {
-        this.views.push(view);
+    addView(item) {
+        return this.views.push(item);
     }
 
     isExist(name) {
-        for (let i = 0; i < this.views.length; i++) {
-            if (this.views[i].name === name.toLowerCase()) {
-                return true;
-            }
-        }
-        return false;
+        return (this.views.findIndex(item => item.name === name.toLowerCase()) !== -1)
     }
 
     closeView(name) {
@@ -54,7 +49,7 @@ class ViewManager {
     }
 
     activeView(name) {
-        const timestamp = Math.floor(Date.now() / 1000);
+        const timestamp = Date.now();
         for (let i = 0; i < this.views.length; i++) {
             if (this.views[i].name === name.toLowerCase()) {
                 this.views[i].time = timestamp;
@@ -67,23 +62,7 @@ class ViewManager {
         }
     }
 
-    createNewView(url, name) {
-        if (this.isExist(name)) {
-            const activeView = this.getActiveView();
-            this.activeView(name);
-
-            if(activeView?.name === name){
-                this.refreshActiveView();
-                return null;
-            }
-
-            if(CONS.APP.CLOSE_SITE_NAME === name){
-                this.refreshActiveView();
-                return null;
-            }
-            return null;
-        }
-
+    createView(url, name, source) {
         const {fingerprint, headers} = fingerPrint.getFinger();
         const partitionName = 'persist:' + name;
         const mySession = session.fromPartition(partitionName);
@@ -91,6 +70,9 @@ class ViewManager {
         const isRemoteAddr = url.toLowerCase().startsWith("http");
         let preloadjs = isRemoteAddr ? "web.js" : "setting.js";
         if(url.includes("http://localhost:")) preloadjs = "setting.js"
+
+        const unique = Date.now();
+        const args = {source, name, unique, fingerprint};
 
         const view = new WebContentsView({
             webPreferences: {
@@ -100,9 +82,9 @@ class ViewManager {
                 contextIsolation: true,
                 dnsPrefetch: false,
                 partition: partitionName,
-                additionalArguments: ['--name', JSON.stringify(fingerprint)],
+                additionalArguments: [`--params=${JSON.stringify(args)}`],
                 preload: CONS.APP.PATH + '/app/preload/'+ preloadjs
-        }})
+            }})
 
         this.renderProcessGone(view);
         view.webContents.setZoomLevel(0)
@@ -135,15 +117,35 @@ class ViewManager {
             return { action: 'deny' };
         })
 
-        this.views.forEach(view => {view.object.setVisible(false)})
-
-        this.addView({
+        const viewItem = {
             name: name.toLowerCase(),
             url: url.toLowerCase(),
-            time: Math.floor(Date.now() / 1000),
+            time: unique,
+            unique:unique,
             object: view
-        })
-        return view
+        }
+
+        this.views.forEach(view => view.object.setVisible(false))
+        this.addView(viewItem)
+
+        eventManager.emit('layout:resize', {view: viewItem});
+        return viewItem;
+    }
+
+    createMultiView(url, name) {
+        return this.createView(url, name, CONS.APP.VIEW_TYPE.MULTI)
+    }
+    createNewView(url, name) {
+        if (this.isExist(name)) {
+            const activeView = this.getActiveView();
+            this.activeView(name);
+
+            if(activeView?.name === name || CONS.APP.CLOSE_SITE_NAME === name){
+                this.refreshActiveView();
+                return true;
+            }
+        }
+        this.createView(url, name, CONS.APP.VIEW_TYPE.SINGLE)
     }
 
     injectJsCode(view, name){

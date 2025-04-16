@@ -1,10 +1,10 @@
 const { contextBridge, ipcRenderer, webFrame}  = require('electron');
 
-const args = process.argv;
-const index = args.indexOf('--name');
-const fingerPrint = JSON.parse(index !== -1 ? args[index + 2] : null);
+const paramEntry = process.argv.find(item => item.startsWith('--params='));
+const context = JSON.parse(paramEntry.substring(paramEntry.indexOf('=') + 1));
+const fingerPrint = context.fingerprint;
 
-//
+//const context = {source: params.source, name: params.name, unique: params.unique}
 // Object.defineProperties(navigator, {
 //     //appVersion:{get:()=> fingerPrint.navigator.appVersion},
 //     userAgent: {get:()=> fingerPrint.navigator.userAgent},
@@ -16,21 +16,20 @@ const fingerPrint = JSON.parse(index !== -1 ? args[index + 2] : null);
 
 (async ()=>{
     await webFrame.executeJavaScript(`
-Object.defineProperties(screen, {
-    width: { value: ${fingerPrint.screen.width} },
-    height: { value: ${fingerPrint.screen.height} }
-});
-
-Object.defineProperty(navigator, 'appVersion', {
-    value: "${fingerPrint.navigator.appVersion}"
-});
-Object.defineProperty(navigator, 'userAgent', {
-    value: "${fingerPrint.navigator.userAgent}"
-});
-Object.defineProperty(navigator, 'userAgentData', {
-    value: ${JSON.stringify(fingerPrint.navigator.userAgentData)}
-});
-`)
+        Object.defineProperties(screen, {
+            width: { value: ${fingerPrint.screen.width} },
+            height: { value: ${fingerPrint.screen.height} }
+        });
+        Object.defineProperty(navigator, 'appVersion', {
+            value: "${fingerPrint.navigator.appVersion}"
+        });
+        Object.defineProperty(navigator, 'userAgent', {
+            value: "${fingerPrint.navigator.userAgent}"
+        });
+        Object.defineProperty(navigator, 'userAgentData', {
+            value: ${JSON.stringify(fingerPrint.navigator.userAgentData)}
+        });
+    `)
 })()
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -67,14 +66,21 @@ ipcRenderer.on('open:window', (event, url) => {
 window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     const selectionText = window.getSelection().toString().trim();
+    const data = {x: e.clientX, y: e.clientY};
     if (selectionText) {
         ipcRenderer.send('copy:text', selectionText)
-        ipcRenderer.send("popup:contextMenu", {x: e.clientX, y: e.clientY, copy:true})
+        ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:true}))
     }else{
-        ipcRenderer.send('copy:text', window.location.href)
-        ipcRenderer.send("popup:contextMenu", {x: e.clientX, y: e.clientY, copy:false})
-    }
+        const isInputElement = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+        const isContentEditable = e.target.isContentEditable;
 
+        if(isInputElement || isContentEditable){
+            ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:true, paste:true}))
+        }else{
+            //ipcRenderer.send('copy:text', window.location.href)
+            ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:false}))
+        }
+    }
 });
 
 window.addEventListener('keydown', (event) => {

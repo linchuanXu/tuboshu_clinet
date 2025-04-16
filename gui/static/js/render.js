@@ -33,14 +33,23 @@ function handleNavItemClick(event) {
     highlightedItems.forEach(item => item.classList.remove('highlighted'));
 
     let element = event.target;
+    const site = {};
     while (element && element !== event.currentTarget) {
         if (element.classList.contains('nav-item')) {
             element.classList.add('highlighted');
-            window.myApi.openUrl(element.dataset.url, element.dataset.name);
+            site.url = element.dataset.url;
+            site.name = element.dataset.name;
             break;
         }
         element = element.parentNode;
     }
+
+    if(event.ctrlKey || event.metaKey){
+        site.multi = true;
+    }else{
+        site.multi = false;
+    }
+    window.myApi.openUrl(site);
 }
 
 function autoNavItemClick(data) {

@@ -22,7 +22,6 @@ class FingerPrint {
     }
 
     getFinger() {
-
         const { fingerprint, headers } = this.fingerPrint.getFingerprint({
             devices: ['desktop'],
             operatingSystems: [this.#getPlatform()],
