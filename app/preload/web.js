@@ -4,30 +4,19 @@ const paramEntry = process.argv.find(item => item.startsWith('--params='));
 const context = JSON.parse(paramEntry.substring(paramEntry.indexOf('=') + 1));
 const fingerPrint = context.fingerprint;
 
-//const context = {source: params.source, name: params.name, unique: params.unique}
-// Object.defineProperties(navigator, {
-//     //appVersion:{get:()=> fingerPrint.navigator.appVersion},
-//     userAgent: {get:()=> fingerPrint.navigator.userAgent},
-//     userAgentData:{get:()=> fingerPrint.navigator.userAgentData},
-//     languages: {get:()=> fingerPrint.navigator.languages},
-//     webdriver: {get:()=> fingerPrint.navigator.webdriver},
-//     platform: {get:()=> fingerPrint.navigator.platform}
-// })
-
 (async ()=>{
     await webFrame.executeJavaScript(`
-        Object.defineProperties(screen, {
-            width: { value: ${fingerPrint.screen.width} },
-            height: { value: ${fingerPrint.screen.height} }
+        Object.defineProperties(screen,  {
+            width: { value: ${fingerPrint.screen.width}  },
+            height: { value: ${fingerPrint.screen.height}  }
         });
-        Object.defineProperty(navigator, 'appVersion', {
-            value: "${fingerPrint.navigator.appVersion}"
-        });
-        Object.defineProperty(navigator, 'userAgent', {
-            value: "${fingerPrint.navigator.userAgent}"
-        });
-        Object.defineProperty(navigator, 'userAgentData', {
-            value: ${JSON.stringify(fingerPrint.navigator.userAgentData)}
+        Object.defineProperties(navigator,  {
+            webdriver: {get:()=> ${fingerPrint.navigator.webdriver}}, 
+            appVersion: {get:()=> "${fingerPrint.navigator.appVersion}"}, 
+            userAgent: {get:()=> "${fingerPrint.navigator.userAgent}"}, 
+            userAgentData: {get:()=> (${JSON.stringify(fingerPrint.navigator.userAgentData)})}, 
+            languages: {get:()=> ${JSON.stringify(fingerPrint.navigator.languages)}}, 
+            platform: {get:()=> "${fingerPrint.navigator.platform}"} 
         });
     `)
 })()
@@ -47,11 +36,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 //   padding: '20px',
 // });
 // document.body.appendChild(topDiv);
-// new FloatingNav({
-//     background: '#ccc',
-//     buttonBackground: '#e3f2fd',
-//     buttonHover: '#bbdefb',
-// });
     `);
 })
 
@@ -87,7 +71,9 @@ window.addEventListener('keydown', (event) => {
     const isInputElement = ['INPUT', 'TEXTAREA'].includes(event.target.tagName);
     const isContentEditable = event.target.isContentEditable;
 
-    if (isInputElement || isContentEditable) {
+    const hasInputContent = isInputElement && event.target.value.trim() !== '';
+    const hasEditableContent = isContentEditable && event.target.innerText.trim() !== '';
+    if (hasInputContent || hasEditableContent) {
         return;
     }
 

@@ -3,11 +3,11 @@
 import LeftMenu from "@/components/LeftMenu.vue";
 import {darkTheme} from "naive-ui";
 
-const theme = ref('null');
+const theme = ref({});
 // 检测系统主题
 const checkTheme = () => {
   const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  theme.value = isDark ? darkTheme : null;
+  theme.value = isDark ? darkTheme : {};
 };
 
 const handleChange = (e) => {

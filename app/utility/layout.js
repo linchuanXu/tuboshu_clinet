@@ -24,11 +24,12 @@ class Layout {
     getLayout(win){
         const [width, height] = win.getContentSize();
         const menuWidth = this.getMenuWidth();
+        const gap = 2;
 
         if(!this.getMenuVisible()){
             return {
                 menu: {x: 0, y: 0, width: 0, height: height},
-                web: {x: 0, y: 0, width: width, height: height},
+                web: {x: 0, y: 0, width: width-gap, height: height-gap},
                 view: {x: 0, y: 0, width: width, height: height}
             }
         }
@@ -36,14 +37,14 @@ class Layout {
         if(this.getMenuPos() === 'left'){
             return {
                 menu: {x: 0, y: 0, width: menuWidth, height: height},
-                web: {x: menuWidth, y: 0, width: width - menuWidth, height: height},
+                web: {x: menuWidth, y: 0, width: width-gap - menuWidth, height: height-gap},
                 view: {x: 0, y: 0, width: width - menuWidth, height: height}
             }
         }
 
         return {
             menu: {x: width - menuWidth, y: 0, width: menuWidth, height: height},
-            web: {x: 0, y: 0, width: width - menuWidth, height: height},
+            web: {x: 0, y: 0, width: width-gap - menuWidth, height: height-gap},
             view: {x: 0, y: 0, width: width - menuWidth, height: height}
         }
     }

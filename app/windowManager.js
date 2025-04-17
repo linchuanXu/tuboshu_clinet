@@ -52,14 +52,15 @@ class WindowManager{
             }
         });
 
+
         const layout = Layout.getLayout(win)
         menuView.setBounds(layout.menu)
         menuView.webContents.loadFile('gui/index.html').then(()=>{
-            // this.gotoSetting();
             this.afterCloseSitePage();
         })
 
         const webView = new View();
+        //webView.setBackgroundColor("#aaa")
         webView.setBounds(layout.web)
 
         win.contentView.addChildView(menuView);
@@ -359,7 +360,6 @@ class WindowManager{
     setSystemTheme(){
         nativeTheme.themeSource = storeManager.getSetting('systemTheme');
     }
-
     gotoSetting(){
         lokiManager.then((manager) => {
             const menu = manager.getGroupMenus();
@@ -383,7 +383,7 @@ class WindowManager{
 
         const currentView = viewManager.getActiveView();
         lokiManager.then((manager) => {
-            const urls = manager.getMenus().openMenus.map(item => item.url);
+            const urls = manager.getGroupMenus().openMenus.map(item => item.url);
             viewManager.views = viewManager.views.filter(view => {
                 if(currentView.name === view.name) return true;
 
@@ -393,6 +393,7 @@ class WindowManager{
                 if (notInMenu || overTime) {
                     view.object.webContents.close();
                     this.webView.removeChildView(view.object);
+                    view.object = null;
                     return false;
                 }
                 return true;
@@ -405,12 +406,13 @@ class WindowManager{
 
     closeHideSites(){
         lokiManager.then((manager) => {
-            const urls = manager.getMenus().openMenus.map(item => item.url);
+            const urls = manager.getGroupMenus().openMenus.map(item => item.url);
             viewManager.views = viewManager.views.filter(view => {
                 if(view.name  === "setting") return true;
                 if(!urls.includes(view.url)){
                     this.webView.removeChildView(view.object);
                     view.object.webContents.close();
+                    view.object = null;
                     return false;
                 }
             })

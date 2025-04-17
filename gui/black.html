@@ -22,10 +22,10 @@
         
         .container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             padding: 20px;
-            max-width: 600px;
+            max-width: 550px;
             width: 90%;
         }
         
@@ -106,7 +106,6 @@
 	}
 	
 	function updateMenu(menus, pid) {
-        console.log(menus)
 		const box = document.getElementById(pid);
 		box.innerHTML="";
 		menus.forEach(item => {
@@ -122,8 +121,6 @@
 	</script>
 </head>
 <body>
-    <div class="container" id="container">
-
-    </div>
+    <div class="container" id="container"></div>
 </body>
 </html>

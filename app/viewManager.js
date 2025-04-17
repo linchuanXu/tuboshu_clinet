@@ -127,7 +127,6 @@ class ViewManager {
 
         this.views.forEach(view => view.object.setVisible(false))
         this.addView(viewItem)
-
         eventManager.emit('layout:resize', {view: viewItem});
         return viewItem;
     }
@@ -144,6 +143,7 @@ class ViewManager {
                 this.refreshActiveView();
                 return true;
             }
+            return true;
         }
         this.createView(url, name, CONS.APP.VIEW_TYPE.SINGLE)
     }
