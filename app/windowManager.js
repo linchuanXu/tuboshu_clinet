@@ -391,9 +391,8 @@ class WindowManager{
                 const overTime = Math.floor((Date.now() - view.time) / 1000) > 600;
 
                 if (notInMenu || overTime) {
-                    view.object.webContents.close();
                     this.webView.removeChildView(view.object);
-                    view.object = null;
+                    viewManager.clearView(view)
                     return false;
                 }
                 return true;
@@ -405,16 +404,17 @@ class WindowManager{
     }
 
     closeHideSites(){
+        const currentView = viewManager.getActiveView();
         lokiManager.then((manager) => {
             const urls = manager.getGroupMenus().openMenus.map(item => item.url);
             viewManager.views = viewManager.views.filter(view => {
-                if(view.name  === "setting") return true;
+                if(currentView.name === view.name) return true;
                 if(!urls.includes(view.url)){
                     this.webView.removeChildView(view.object);
-                    view.object.webContents.close();
-                    view.object = null;
+                    viewManager.clearView(view)
                     return false;
                 }
+                return true;
             })
         })
     }

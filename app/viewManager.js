@@ -25,13 +25,19 @@ class ViewManager {
         if (index === -1) return false;
 
         const closedView = this.views.splice(index, 1)[0];
-        if (closedView.object.webContents && !closedView.object.webContents.isDestroyed()) {
-            closedView.object.webContents.close();
-            closedView.object = null;
-        }
+        this.clearView(closedView)
 
         return true;
     }
+
+    clearView(view){
+        if (view.object?.webContents?.isDestroyed !== true){
+            view.object.webContents.removeAllListeners();
+            view.object.webContents.close()
+            view.object = null;
+        }
+    }
+
 
     refreshActiveView(){
         const activeView = this.getActiveView();
