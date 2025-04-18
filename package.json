@@ -1,11 +1,11 @@
 {
   "name": "tuboshu",
   "version": "v2.0.4",
-  "main": "app/main.js",
+  "main": "out/main.js",
   "type": "module",
   "scripts": {
     "start:debug": "electron --enable-logging --log-file=electron.log --trace-warnings .",
-    "start": "electron .",
+    "start": "electron-vite build && electron .",
     "pack": "electron-builder --dir",
     "build": "electron-builder"
   },
@@ -31,6 +31,7 @@
     "npmRebuild": false,
     "files": [
       "**/*",
+      "!app/**/*",
       "!.github/**/*",
       "!.git/**/*",
       "!.idea/**/*",
@@ -38,16 +39,15 @@
       "!dist/*",
       "!README.md",
       "!.node-version",
-      "!node_modules/**/{.cache,.bin,test}",
-      "!**/plugin/**/*"
+      "!electron.vite.config.js",
+      "!pnpm-workspace.yaml",
+      "!node_modules/**/{.cache,.bin,test}"
     ],
     "extraResources": [
       {
         "from": "./resource/plugin",
         "to": "plugin",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "asar": true,

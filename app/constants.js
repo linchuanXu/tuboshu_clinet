@@ -2,10 +2,10 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 import {app} from "electron";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname =  path.dirname(__filename);
+const ___filename = fileURLToPath(import.meta.url);
+const ___dirname =  path.dirname(___filename);
 
-const appPath = path.join(__dirname, '..');
+const appPath = path.join(___dirname, '..');
 const SETTING_URL = app.isPackaged
     ? `file://${path.join(appPath, 'gui/dist/index.html')}`
     : 'http://localhost:5173/';
