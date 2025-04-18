@@ -158,6 +158,8 @@ class WindowManager{
 
         ipcMain.on('open:url', (event, site) => {
             viewManager.createNewView(site.url, site.name)
+            console.log('total children:', this.webView.children.length);
+            console.log('total Views', viewManager.views.length);
         })
 
         ipcMain.on('open:site', (event, site) => {
@@ -359,6 +361,12 @@ class WindowManager{
 
     setSystemTheme(){
         nativeTheme.themeSource = storeManager.getSetting('systemTheme');
+        if(nativeTheme.shouldUseDarkColors ){
+            this.window.setBackgroundColor('#18181C');
+        }else{
+            this.window.setBackgroundColor('#ffffff');
+        }
+
     }
     gotoSetting(){
         lokiManager.then((manager) => {
@@ -391,7 +399,6 @@ class WindowManager{
                 const overTime = Math.floor((Date.now() - view.time) / 1000) > 600;
 
                 if (notInMenu || overTime) {
-                    this.webView.removeChildView(view.object);
                     viewManager.clearView(view)
                     return false;
                 }
@@ -410,7 +417,6 @@ class WindowManager{
             viewManager.views = viewManager.views.filter(view => {
                 if(currentView.name === view.name) return true;
                 if(!urls.includes(view.url)){
-                    this.webView.removeChildView(view.object);
                     viewManager.clearView(view)
                     return false;
                 }

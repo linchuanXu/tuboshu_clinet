@@ -21,24 +21,6 @@ const fingerPrint = context.fingerprint;
     `)
 })()
 
-window.addEventListener('DOMContentLoaded', async () => {
-    await webFrame.executeJavaScript(`
-// const topDiv = document.createElement('div');
-// topDiv.id = 'top-layer-div';
-// topDiv.textContent = '这是动态生成的顶层 DIV';
-// Object.assign(topDiv.style, {
-//   position: 'fixed',
-//   top: '0',
-//   left: '0',
-//   width: '100%',
-//   zIndex: '9999',
-//   backgroundColor: 'white',
-//   padding: '20px',
-// });
-// document.body.appendChild(topDiv);
-    `);
-})
-
 contextBridge.exposeInMainWorld('myApi', {
     refreshSelf:() => ipcRenderer.invoke('refresh:self')
 })

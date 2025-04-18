@@ -1,4 +1,4 @@
-import {Menu, ipcMain, clipboard} from 'electron'
+import {Menu, ipcMain, clipboard, app} from 'electron'
 import windowManager from './../windowManager.js'
 import viewManager from "./../viewManager.js";
 import storeManager from "../store/storeManager.js";
@@ -55,8 +55,10 @@ class ContextManager {
             // if(history.length() > 1){
             //     template.push({ label: '主页', click: () => this.goHome()})
             // }
-            //template.push({ type: 'separator' })
-            //template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
+            if(!app.isPackaged){
+                template.push({ type: 'separator' })
+                template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
+            }
         }else{
             if(isPaste === true && this.isClipboardEmpty() === false){
                 template.push({ label: '粘贴', role: 'paste' })

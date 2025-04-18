@@ -31,11 +31,11 @@ class ViewManager {
     }
 
     clearView(view){
-        if (view.object?.webContents?.isDestroyed !== true){
+        if (view.object.webContents?.isDestroyed !== true){
             view.object.webContents.removeAllListeners();
             view.object.webContents.close()
-            view.object = null;
         }
+        view.object = null;
     }
 
 
@@ -101,6 +101,7 @@ class ViewManager {
 
         Utility.alterRequestHeader(view, headers)
         Utility.alterResponseHeader(view)
+        Utility.loadExtensions(view).finally()
 
         this.injectJsCode(view, name);
         this.setProxy(mySession, name).then(()=>{

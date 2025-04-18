@@ -30,11 +30,19 @@ class Utility {
 
     static async loadExtensions(view) {
         const sess = view.webContents.session;
-        const extensionsDir = path.join(__dirname, './../ext');
-        const extensionFolders = await readdir(extensionsDir);
-        for (const folder of extensionFolders) {
-            const extPath = path.join(extensionsDir, folder);
-            await sess.loadExtension(extPath);
+        const extensionsDir = path.resolve(__dirname, '../plugin');
+        const entries = await readdir(extensionsDir, { withFileTypes: true });
+
+        for (const entry of entries) {
+            if (!entry.isDirectory() || !entry.name.endsWith('.ext')) continue;
+
+            const extPath = path.join(extensionsDir, entry.name);
+            try {
+                await sess.loadExtension(extPath);
+                console.log(`Successfully loaded extension: ${extPath}`);
+            } catch (err) {
+                console.error(`Failed to load extension ${extPath}:`, err);
+            }
         }
         return true;
     }
