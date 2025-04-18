@@ -11,18 +11,5 @@ export default defineConfig({
             }
         },
         plugins: [externalizeDepsPlugin()],
-    },
-    preload: {
-        build: {
-            outDir: 'out/preload',
-            rollupOptions: {
-                input: {
-                    navigate: path.resolve(__dirname, 'resource/preload/navigate.js'),
-                    setting: path.resolve(__dirname, 'resource/preload/setting.js'),
-                    web: path.resolve(__dirname, 'resource/preload/web.js')
-                }
-            }
-        },
-        plugins: [externalizeDepsPlugin()],
     }
 })
