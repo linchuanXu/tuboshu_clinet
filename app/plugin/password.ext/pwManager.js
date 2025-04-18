@@ -16,7 +16,7 @@ class PwManager {
     hasPasswordFields() {
         return document.querySelector('input[type="password"]') !== null;
     }
-    
+
     setupMutationObserver() {
         this.observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
