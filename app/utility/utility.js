@@ -1,13 +1,11 @@
 import {app} from 'electron'
 import path from 'path'
-import { readFile, readdir } from 'fs/promises';
+import { readdir } from 'fs/promises';
 import { URL, fileURLToPath } from 'url'
 import requestJson from './request.js'
+import CONS from '../constants.js'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname =  path.dirname(__filename);
 const versionUrl = "https://upsort.com/tuboshu";
-
 const getDomain = (url) => {
     try {
         const hostname = new URL(url.toLowerCase()).hostname;
@@ -34,7 +32,7 @@ class Utility {
 
         const extensionsDir = app.isPackaged
             ? path.join(process.resourcesPath, 'plugin')
-            : path.join(__dirname, '../plugin');
+            : path.join(CONS.APP.PATH, './resource/plugin');
         const entries = await readdir(extensionsDir, { withFileTypes: true });
 
         for (const entry of entries) {
@@ -61,24 +59,6 @@ class Utility {
                 console.error('Script injection failed:', e);
             }
         })();`
-    }
-
-    static async getInjectPluginJsCode() {
-        const pluginDir = path.join(__dirname, './../plugin');
-        const jsFiles = await readdir(pluginDir)
-            .filter(file => file.endsWith('.plugin.js'))
-            .sort();
-
-        let combinedCode = '';
-        for (const file of jsFiles) {
-            try {
-                const filePath = path.join(pluginDir, file);
-                combinedCode += await readFile(filePath, 'utf-8');
-            } catch (err) {
-                console.error(`fail ${file}:`, err);
-            }
-        }
-        return combinedCode;
     }
 
     static alterRequestHeader(view, headers){

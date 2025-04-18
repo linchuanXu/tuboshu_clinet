@@ -89,7 +89,7 @@ class ViewManager {
                 dnsPrefetch: false,
                 partition: partitionName,
                 additionalArguments: [`--params=${JSON.stringify(args)}`],
-                preload: CONS.APP.PATH + '/app/preload/'+ preloadjs
+                preload: CONS.APP.PATH + '/resource/preload/'+ preloadjs
             }})
 
         this.renderProcessGone(view);

@@ -48,10 +48,9 @@ class WindowManager{
                 nodeIntegration: false,
                 contextIsolation: true,
                 devTools: true,
-                preload: CONS.APP.PATH +'/app/preload/navigate.js'
+                preload: CONS.APP.PATH +'/resource/preload/navigate.js'
             }
         });
-
 
         const layout = Layout.getLayout(win)
         menuView.setBounds(layout.menu)
