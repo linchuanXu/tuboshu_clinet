@@ -35,7 +35,17 @@
       "!.idea/**/*",
       "!gui/setting/**/*",
       "!dist/*",
-      "!node_modules/**/{.cache,.bin,test}"
+      "!README.md",
+      "!.node-version",
+      "!node_modules/**/{.cache,.bin,test}",
+      "!**/plugin/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "./app/plugin",
+        "to": "plugin",
+        "filter": ["**/*"]
+      }
     ],
     "asar": true,
     "compression": "maximum",

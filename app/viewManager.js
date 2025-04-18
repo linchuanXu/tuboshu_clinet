@@ -73,8 +73,8 @@ class ViewManager {
         const partitionName = 'persist:' + name;
         const mySession = session.fromPartition(partitionName);
 
-        const isRemoteAddr = url.toLowerCase().startsWith("http");
-        let preloadjs = isRemoteAddr ? "web.js" : "setting.js";
+        const isHttpAddr = url.toLowerCase().startsWith("http");
+        let preloadjs = isHttpAddr ? "web.js" : "setting.js";
         if(url.includes("http://localhost:")) preloadjs = "setting.js"
 
         const unique = Date.now();
@@ -99,9 +99,11 @@ class ViewManager {
             view.webContents.openDevTools({mode: 'right',activate: true})
         }
 
-        Utility.alterRequestHeader(view, headers)
-        Utility.alterResponseHeader(view)
-        Utility.loadExtensions(view).finally()
+        if(isHttpAddr){
+            Utility.alterRequestHeader(view, headers)
+            Utility.alterResponseHeader(view)
+            Utility.loadExtensions(view).finally()
+        }
 
         this.injectJsCode(view, name);
         this.setProxy(mySession, name).then(()=>{

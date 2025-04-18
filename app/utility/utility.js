@@ -1,6 +1,7 @@
+import {app} from 'electron'
+import path from 'path'
 import { readFile, readdir } from 'fs/promises';
 import { URL, fileURLToPath } from 'url'
-import path from 'path'
 import requestJson from './request.js'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +31,10 @@ class Utility {
 
     static async loadExtensions(view) {
         const sess = view.webContents.session;
-        const extensionsDir = path.resolve(__dirname, '../plugin');
+
+        const extensionsDir = app.isPackaged
+            ? path.join(process.resourcesPath, 'plugin')
+            : path.join(__dirname, '../plugin');
         const entries = await readdir(extensionsDir, { withFileTypes: true });
 
         for (const entry of entries) {
