@@ -4,13 +4,13 @@ import path from 'path'
 import Loki from 'sylviejs'
 import CONS from '../constants.js'
 
-const dbPath = path.join(app.getPath('userData'),  'data.db');
+const dbPath = path.join(app.getPath('userData'), 'data.db');
 const md5Hash = (data) => crypto.createHash('md5').update(data).digest('hex');
 const processImg = (menuArray) => menuArray.map(element => {
     if(element.img.startsWith("data:")) return element;
     if(element.img.includes("preview_default")) element.img = CONS.APP.PREVIEW_IMG;
 
-    const imagePath = CONS.APP.PATH +""+ element.img;
+    const imagePath = path.join(CONS.APP.PATH, element.img);
     const Img = nativeImage.createFromPath(imagePath);
     return { ...element, img: Img.toDataURL()};
 });
@@ -29,7 +29,7 @@ class LokiManager {
                     resolve(dbInstance);
                 },
                 autosave: false,
-                //autosaveInterval: 1000,
+                autosaveInterval: 1000,
             });
         });
 

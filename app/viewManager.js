@@ -118,7 +118,10 @@ class ViewManager {
             }
 
             if(storeManager.getSetting('howLinkOpenMethod') === "tuboshu"){
-                return {action: 'allow', overrideBrowserWindowOptions: {autoHideMenuBar: true}};
+                return {
+                    action: 'allow',
+                    overrideBrowserWindowOptions: {autoHideMenuBar: true}
+                };
             }
 
             shell.openExternal(details.url).finally();
@@ -136,6 +139,7 @@ class ViewManager {
         this.views.forEach(view => view.object.setVisible(false))
         this.addView(viewItem)
         eventManager.emit('layout:resize', {view: viewItem});
+
         return viewItem;
     }
 
