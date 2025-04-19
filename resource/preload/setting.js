@@ -21,3 +21,23 @@ contextBridge.exposeInMainWorld('myApi', {
     removeMenu: (menu) => ipcRenderer.send('remove:menu', menu),
     updateSetting: (setting) => ipcRenderer.send('update:setting', setting),
 });
+
+window.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const selectionText = window.getSelection().toString().trim();
+    const data = {x: e.clientX, y: e.clientY};
+    if (selectionText) {
+        ipcRenderer.send('copy:text', selectionText)
+        ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:true}))
+    }else{
+        const isInputElement = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
+        const isContentEditable = e.target.isContentEditable;
+
+        if(isInputElement || isContentEditable){
+            ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:true, paste:true}))
+        }else{
+            //ipcRenderer.send('copy:text', window.location.href)
+            ipcRenderer.send("popup:contextMenu", Object.assign(data, {copy:false}))
+        }
+    }
+});

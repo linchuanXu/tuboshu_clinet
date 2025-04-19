@@ -74,8 +74,7 @@ class ViewManager {
         const mySession = session.fromPartition(partitionName);
 
         const isHttpAddr = url.toLowerCase().startsWith("http");
-        let preloadjs = isHttpAddr ? "web.js" : "setting.js";
-        if(url.includes("http://localhost:")) preloadjs = "setting.js"
+        const preloadjs = Utility.selectAppropriatePreload(url);
 
         const unique = Date.now();
         const args = {source, name, unique, fingerprint};
@@ -88,16 +87,10 @@ class ViewManager {
                 contextIsolation: true,
                 dnsPrefetch: false,
                 partition: partitionName,
-                additionalArguments: [`--params=${JSON.stringify(args)}`],
-                preload: CONS.APP.PATH + '/resource/preload/'+ preloadjs
-            }})
-
-        this.renderProcessGone(view);
-        view.webContents.setZoomLevel(0)
-
-        if(storeManager.getSetting('isOpenDevTools')){
-            view.webContents.openDevTools({mode: 'right',activate: true})
-        }
+                preload: preloadjs,
+                additionalArguments: [`--params=${JSON.stringify(args)}`]
+            }
+        })
 
         if(isHttpAddr){
             Utility.alterRequestHeader(view, headers)
@@ -105,12 +98,18 @@ class ViewManager {
             Utility.loadExtensions(view).finally()
         }
 
+        view.webContents.setZoomLevel(0)
+        this.renderProcessGone(view);
         this.injectJsCode(view, name);
         this.setProxy(mySession, name).then(()=>{
             Utility.loadWithLoading(view, url).then(()=>{
                 eventManager.emit('set:title', view.webContents.getTitle());
             })
         });
+
+        if(storeManager.getSetting('isOpenDevTools')){
+            view.webContents.openDevTools({mode: 'right',activate: true})
+        }
 
         view.webContents.setWindowOpenHandler((details) => {
             if(Utility.isMainDomainEqual(details.url, url)){
@@ -158,7 +157,7 @@ class ViewManager {
     }
 
     injectJsCode(view, name){
-        view.webContents.on('did-finish-load',async ()=>{
+        view.webContents.on('dom-ready',async ()=>{
             const manager = await lokiManager;
             const site = manager.getSite(name);
             if(site && Object.hasOwn(site,'jsCode') && site.jsCode.length > 0){

@@ -37,7 +37,6 @@ class Utility {
 
         for (const entry of entries) {
             if (!entry.isDirectory() || !entry.name.endsWith('.ext')) continue;
-
             const extPath = path.join(extensionsDir, entry.name);
             try {
                 await sess.loadExtension(extPath);
@@ -47,6 +46,17 @@ class Utility {
             }
         }
         return true;
+    }
+
+    static selectAppropriatePreload(url){
+        const isHttpAddr = url.toLowerCase().startsWith("http");
+        let preloadjs = isHttpAddr ? "web.js" : "setting.js";
+        if(url.toLowerCase().includes("http://localhost:")){
+            preloadjs = "setting.js"
+        }else if(url.toLowerCase().includes('transfer.html')){
+            preloadjs = "transfer.js"
+        }
+        return path.join(CONS.APP.PATH ,'/resource/preload/', preloadjs)
     }
 
     static appendJsCode(code) {
