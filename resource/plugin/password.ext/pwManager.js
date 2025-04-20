@@ -179,7 +179,9 @@ class PwManager {
 }
 
 function __initializePasswordManager() {
-    new PwManager();
+	if (document.querySelector('input[type="password"]')) {
+        new PwManager();
+    }
 }
 
 // 初始化逻辑保持不变
