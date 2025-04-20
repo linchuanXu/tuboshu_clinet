@@ -24,7 +24,7 @@ class Layout {
     getLayout(win){
         const [width, height] = win.getContentSize();
         const menuWidth = this.getMenuWidth();
-        const gap = 2;
+        const gap = 5;
 
         if(!this.getMenuVisible()){
             return {
