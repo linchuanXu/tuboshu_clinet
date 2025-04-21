@@ -8,7 +8,7 @@ const props = defineProps({
   <div class="wrap-box">
     <n-avatar
         round
-        size="10"
+        size="medium"
         :src="element.img"
     />
     <span class="name">{{ element.tag }}</span>
@@ -18,8 +18,8 @@ const props = defineProps({
 <style scoped>
 .wrap-box {
   padding: 5px;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   overflow: hidden;
   cursor: move;
   display: flex;
@@ -32,8 +32,8 @@ const props = defineProps({
 }
 
 .name{
-  color: #666;
-  font-size: 8px;
+  color: #333;
+  font-size: 12px;
   padding: 2px;
   white-space: nowrap;
   overflow: hidden;

@@ -1,4 +1,4 @@
-import {app, BaseWindow, View, screen, ipcMain, clipboard, WebContentsView, nativeTheme, Menu} from 'electron'
+import {app, BaseWindow, View, screen, ipcMain, clipboard, WebContentsView, nativeTheme} from 'electron'
 import viewManager from './viewManager.js'
 import lokiManager from './store/lokiManager.js'
 import storeManager from './store/storeManager.js'
@@ -59,9 +59,9 @@ class WindowManager{
         })
 
         const webView = new View();
-        //webView.setBackgroundColor("#aaa")
         webView.setBounds(layout.web)
 
+        win.setBackgroundColor("#fff")
         win.contentView.addChildView(menuView);
         win.contentView.addChildView(webView);
         win.show();
@@ -360,12 +360,6 @@ class WindowManager{
 
     setSystemTheme(){
         nativeTheme.themeSource = storeManager.getSetting('systemTheme');
-        if(nativeTheme.shouldUseDarkColors ){
-            this.window.setBackgroundColor('#18181C');
-        }else{
-            this.window.setBackgroundColor('#ffffff');
-        }
-
     }
     gotoSetting(){
         lokiManager.then((manager) => {
