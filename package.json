@@ -1,6 +1,6 @@
 {
   "name": "tuboshu",
-  "version": "v2.0.5",
+  "version": "v2.0.6",
   "main": "out/main.js",
   "type": "module",
   "scripts": {
