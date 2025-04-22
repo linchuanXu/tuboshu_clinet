@@ -35,11 +35,21 @@
 
     const dropzone = document.createElement('div');
     dropzone.className  = 'electron-file-path-dropzone';
-    dropzone.textContent  = '支持EXE|快捷方式|文件夹';
+    dropzone.textContent  = getTipText();
 
     overlay.appendChild(dropzone);
     document.body.appendChild(overlay);
 
+    function isWindows(){
+        return navigator.platform.toLowerCase().startsWith('win')
+    }
+    function getTipText(){
+        if(isWindows()){
+            return '支持EXE|快捷方式|文件夹';
+        }else{
+            return '非Windows系统暂不支持';
+        }
+    }
     function init() {
         document.addEventListener('dragenter',  handleDragEnter);
         document.addEventListener('dragleave',  handleDragLeave);
@@ -64,7 +74,7 @@
     function handleDrop(e) {
         e.preventDefault();
         overlay.style.display  = 'none';
-        if (e.dataTransfer.files.length  > 0) {
+        if ((e.dataTransfer.files.length  > 0) && isWindows()) {
             const file = e.dataTransfer.files[0];
             processFile(file);
         }

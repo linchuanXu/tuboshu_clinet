@@ -66,7 +66,6 @@ class WindowManager{
         win.setBackgroundColor("#fff")
         win.contentView.addChildView(menuView);
         win.contentView.addChildView(webView);
-        win.show();
 
         this.window = win;
         this.menuView = menuView;
@@ -76,6 +75,7 @@ class WindowManager{
         this.bindEvents();
         this.setSystemTheme();
         this.uselessSiteCleaner();
+        win.show();
     }
 
     bindIpcMain(){
