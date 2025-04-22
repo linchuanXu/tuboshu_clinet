@@ -2,6 +2,7 @@
     --bg-color: #ffffff;
     --text-color: #000000;
     --icon-bg: #f0f0f0;
+    --icon-item-bg:#e8e8e8;
     --icon-filter: none;
 }
 
@@ -10,6 +11,7 @@
         --bg-color: #1D1D1D;
         --text-color: #e0e0e0;
         --icon-bg: #333333;
+        --icon-item-bg:#555;
         --icon-filter: invert(0.9);
     }
 }
@@ -22,6 +24,7 @@
 
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -34,7 +37,7 @@ body {
 .container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 10px;
     padding: 20px;
     max-width: 550px;
     width: 90%;
@@ -48,15 +51,18 @@ body {
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    padding: 10px;
+    position: relative;
 }
 
 .icon-item:hover {
+    background: var(--icon-item-bg);
     transform: translateY(-5px);
 }
 
 .icon {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     margin-bottom: 8px;
     display: flex;
@@ -80,6 +86,54 @@ body {
     word-break: break-word;
     max-width: 100%;
     color: var(--text-color);
+}
+
+/* 改进后的关闭按钮样式 */
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.close-btn::before, .close-btn::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 1px;
+    background-color: var(--text-color);
+    transition: background-color 0.2s ease;
+}
+
+.close-btn::before {
+    transform: rotate(45deg);
+}
+
+.close-btn::after {
+    transform: rotate(-45deg);
+}
+
+.icon-item:hover .close-btn {
+    opacity: 0.6;
+}
+
+.close-btn:hover {
+    opacity: 1 !important;
+}
+
+.close-btn:hover::before, .close-btn:hover::after {
+    background-color: #ff4444;
 }
 
 @media (max-width: 768px) {

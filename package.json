@@ -23,7 +23,8 @@
   "dependencies": {
     "conf": "^13.1.0",
     "fingerprint-generator": "^2.1.63",
-    "sylviejs": "^0.0.19"
+    "sylviejs": "^0.0.19",
+    "tuboshu-lnk": "^1.0.1"
   },
   "build": {
     "appId": "com.tuboshu.tuboshu",
@@ -47,7 +48,9 @@
       {
         "from": "./resource/plugin",
         "to": "plugin",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "asar": true,

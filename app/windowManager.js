@@ -6,6 +6,7 @@ import eventManager from './eventManager.js'
 import fetchIcon from './utility/fetchIcon.js'
 import CONS from './constants.js'
 import dataExport from './utility/dataExport.js'
+import winLnk from "./utility/winLnk.js";
 import Layout from "./utility/layout.js"
 import Utility from "./utility/utility.js";
 
@@ -35,6 +36,7 @@ class WindowManager{
             height: winSize.height,
             autoHideMenuBar: true,
             show:false,
+            resizable: true,
             icon: CONS.APP.PATH+'/icon.ico',
             webPreferences: {
                 nodeIntegration: false,
@@ -77,8 +79,9 @@ class WindowManager{
     }
 
     bindIpcMain(){
-        dataExport.bindExportIpc();
-        dataExport.bindImportIpc();
+
+        winLnk.bindIpcMain();
+        dataExport.bindIpcMain();
 
         ipcMain.handle('handle:menu', async (event, hide) => {
             if(hide === true){

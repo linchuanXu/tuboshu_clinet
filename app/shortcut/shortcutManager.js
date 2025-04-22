@@ -56,6 +56,7 @@ class ShortcutManager{
                 resolve(res);
             }
         });
+        this.openTransferSite();
         this.forceSystemExit();
     }
 
@@ -210,6 +211,12 @@ class ShortcutManager{
                 }
             })
         })
+    }
+
+    openTransferSite(){
+        shortcutBase.register('CommandOrControl+Shift+B', () => {
+            windowManager.afterCloseSitePage();
+        });
     }
 
     forceSystemExit(){

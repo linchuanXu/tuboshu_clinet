@@ -58,6 +58,10 @@ class LokiManager {
         if (!this.db.getCollection('groups')) {
             this.db.addCollection('groups', { indices: ['name'], unique: ['name'] });
         }
+
+        if (!this.db.getCollection('lnks')) {
+            this.db.addCollection('lnks', { indices: ['name'], unique: ['name'] });
+        }
     }
 
     // 方法无需再等待，因为初始化已完成
@@ -192,6 +196,29 @@ class LokiManager {
         const groupsCollection = this.db.getCollection('groups');
         groupsCollection.findAndRemove({name: group.name});
         return this.db.saveDatabase();
+    }
+
+    addLnk(lnk) {
+        const lnkCollection = this.db.getCollection('lnks');
+        lnk.order = lnkCollection.count() + 1;
+        lnkCollection.insert(lnk);
+        return this.db.saveDatabase();
+    }
+
+    removeLnk(lnk) {
+        const lnkCollection = this.db.getCollection('lnks');
+        lnkCollection.findAndRemove({name: lnk.name});
+        return this.db.saveDatabase();
+    }
+
+    getLnks() {
+        const lnkCollection = this.db.getCollection('lnks');
+        return lnkCollection.chain().find({}).simplesort('order', { desc: false }).data();
+    }
+
+    getLnkCount(){
+        const lnkCollection = this.db.getCollection('lnks');
+        return lnkCollection.count()
     }
 }
 

@@ -12,7 +12,7 @@ class TrayManager {
     }
 
     createTray() {
-        const iconFile = app.isMac ? 'resource/build/linux_icon.png' : 'icon.ico';
+        const iconFile = app.isMac ? 'resource/build/mac/icon.png' : 'icon.ico';
         const iconPath = path.join(CONS.APP.PATH, iconFile);
 
         this.tray = new Tray(iconPath);

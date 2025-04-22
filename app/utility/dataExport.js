@@ -59,7 +59,7 @@ class DataExport {
         return total;
     }
 
-    bindExportIpc() {
+    bindIpcMain() {
         ipcMain.handle('export:config', async () => {
             const {canceled, filePath} = await dialog.showSaveDialog({
                 title: 'Export Sites Data',
@@ -74,8 +74,7 @@ class DataExport {
             await fs.writeFile(filePath, JSON.stringify(data, null, 2));
             return true;
         })
-    }
-    bindImportIpc(){
+
         ipcMain.handle('import:config', async () => {
             const result = await dialog.showOpenDialog({
                 title: 'Import Sites Data',
