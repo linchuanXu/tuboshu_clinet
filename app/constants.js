@@ -47,7 +47,7 @@ export default Object.freeze({
             tag: "主页",
             name: "home",
             url: "https://mindnotes.cn/",
-            img: "/gui/static/images/logo/home.svg",
+            img: "/gui/static/images/logo/logo.png",
             isOpen:true,
             order:1,
         },
