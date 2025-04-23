@@ -20,7 +20,7 @@ rm -rf ~/Library/Caches/tuboshu
 pnpm start
 
 
-git tag v2.0.2
-git push origin v2.0.2
+git tag n2.0.2
+git push origin n2.0.2
 
 
