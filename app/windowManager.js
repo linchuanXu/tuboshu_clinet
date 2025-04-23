@@ -158,6 +158,16 @@ class WindowManager{
             this.webView.addChildView(data.view.object)
         })
 
+        ipcMain.on('reset:title', (event, name) => {
+            const title = this.window.getTitle();
+            const originTitle = (title.split('-')[0]).trim();
+            if(name){
+                this.window.setTitle(originTitle+' - '+name);
+            }else{
+                this.window.setTitle(originTitle);
+            }
+        });
+
         ipcMain.on('open:url', (event, site) => {
             viewManager.createNewView(site.url, site.name)
             console.log('total children:', this.webView.children.length);
