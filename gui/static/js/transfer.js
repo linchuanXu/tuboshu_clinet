@@ -6,12 +6,18 @@ window.addEventListener('DOMContentLoaded', () => {
     })
 
     window.myUpload.init();
+    window.myToast.init();
     initLnkData();
 })
 
 document.addEventListener('file-path',  async (e) => {
-    await window.myApi.addLnk(e.detail.path);
-    initLnkData();
+    try{
+        await window.myApi.addLnk(e.detail.path);
+        initLnkData();
+        myToast.success("操作成功")
+    }catch (e){
+        myToast.error(e.message)
+    }
 });
 
 function handleNavItemClick(event){

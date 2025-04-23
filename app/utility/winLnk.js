@@ -1,6 +1,6 @@
 import {nativeImage, ipcMain, shell} from "electron";
 import { promises as fs } from 'fs'
-import lnkParser from "tuboshu-lnk";
+import lnkParser from "./parseLnk.js";
 import path from 'path'
 import lokiManager from "../store/lokiManager.js";
 import CONS from "../constants.js"
