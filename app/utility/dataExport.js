@@ -8,8 +8,7 @@ import lokiManager from './../store/lokiManager.js'
 class DataExport {
 
     static ALLOWED_PROPS = ['url', 'tag', 'name', 'img', 'proxy', 'order', 'isOpen', 'jsCode'];
-    constructor() {
-    }
+    constructor() {}
 
     filterObjectProperties(obj) {
         if (typeof obj !== 'object' || obj === null) return {};

@@ -37,7 +37,7 @@ body {
 .container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 5px;
     padding: 20px;
     max-width: 550px;
     width: 90%;
@@ -51,13 +51,37 @@ body {
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    padding: 10px;
+    padding: 15px;
     position: relative;
+    user-select: none;
+    outline: none;
 }
 
 .icon-item:hover {
     background: var(--icon-item-bg);
     transform: translateY(-5px);
+}
+
+.icon-item:active {
+    transform: translateY(0) scale(0.95);
+    opacity: 0.9;
+    transition: all 0.1s ease;
+}
+
+.icon-item.clicked {
+    animation: clickAnimation 0.3s ease;
+}
+
+@keyframes clickAnimation {
+    0% {
+        transform: scale(0.95);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .icon {

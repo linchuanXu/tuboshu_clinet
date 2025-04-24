@@ -90,9 +90,15 @@ function updateLnk(lnks, pid) {
                 <div data-url="${item.exePath}" data-name="${item.name}" class="icon-item">
                     <button data-name="${item.name}" class="close-btn" aria-label="Close"></button>
                     <div class="icon"><img src="${item.icon}" alt="${item.name}"></div>
-                    <span class="icon-label">${item.name}</span>
+                    <span class="icon-label">${resetName(item.name)}</span>
                 </div>
 			`;
         box.innerHTML += navItem;
     });
+}
+function resetName(name){
+    if(name.toLowerCase().endsWith('.exe')){
+        return name.substring(0, name.length - 4);
+    }
+    return name;
 }

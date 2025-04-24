@@ -1,8 +1,3 @@
-// document.addEventListener('file-path',  function(e) {
-//     console.log(' 获取到文件路径:', e.detail.path);
-//     // 使用文件路径...
-// });
-
 (function() {
     const style = document.createElement('style');
     style.textContent  = `
@@ -96,12 +91,10 @@
 (function (){
     class OperationNotifier {
         constructor() {}
-
         init(options = {}) {
-            // 默认配置
             const defaults = {
-                position: 'top-center', // 提示位置：top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
-                duration: 3000,       // 显示持续时间(毫秒)
+                position: 'top-center',  // 提示位置：top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
+                duration: 3000,          // 显示持续时间(毫秒)
                 successColor: '#4CAF50', // 成功提示颜色
                 errorColor: '#F44336',   // 失败提示颜色
                 textColor: '#FFFFFF',    // 文字颜色
@@ -153,8 +146,6 @@
         showNotification(message, type) {
             const notification = document.createElement('div');
             notification.className = `operation-notification operation-notification-${type}`;
-
-            // 设置通知样式
             Object.assign(notification.style, {
                 backgroundColor: type === 'success' ? this.settings.successColor : this.settings.errorColor,
                 color: this.settings.textColor,
@@ -171,14 +162,10 @@
 
             notification.textContent = message;
             this.container.appendChild(notification);
-
-            // 触发动画
             setTimeout(() => {
                 notification.style.opacity = '1';
                 notification.style.transform = 'translateY(0)';
             }, 10);
-
-            // 自动移除
             setTimeout(() => {
                 notification.style.opacity = '0';
                 notification.style.transform = 'translateY(-20px)';
@@ -197,7 +184,6 @@
     // const notifier = new OperationNotifier();
     // notifier.success('操作成功！');
     // notifier.error('操作失败，请重试！');
-
     window.myToast = new OperationNotifier();
 })();
 
