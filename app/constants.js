@@ -46,15 +46,15 @@ export default Object.freeze({
         {
             tag: "主页",
             name: "home",
-            url: "https://mindnotes.cn/",
-            img: "/gui/static/images/logo/logo.png",
+            url: "https://app.mindnotes.cn/",
+            img: "/gui/static/images/logo/home.svg",
             isOpen:true,
             order:1,
         },
         {
             tag: "抖卡",
             name: "tikcards",
-            url: "https://mindnotes.cn/tikcards",
+            url: "https://app.mindnotes.cn/tikcards",
             img: "/gui/static/images/logo/tikcards.png",
             isOpen:true,
             order: 2,
@@ -62,7 +62,7 @@ export default Object.freeze({
         {
             tag: "聊卡",
             name: "chats",
-            url: "https://mindnotes.cn/chats",
+            url: "https://app.mindnotes.cn/chats",
             img: "/gui/static/images/logo/chats.png",
             isOpen:true,
             order: 3,
@@ -70,7 +70,7 @@ export default Object.freeze({
         {
             tag: "笔记本",
             name: "allnotes",
-            url: "https://mindnotes.cn/allnotes",
+            url: "https://app.mindnotes.cn/allnotes",
             img: "/gui/static/images/logo/allnotes.jpg",
             isOpen:true,
             order: 4,
@@ -78,7 +78,7 @@ export default Object.freeze({
         {
             tag: "探索",
             name: "tools",
-            url: "https://mindnotes.cn/tools",
+            url: "https://app.mindnotes.cn/tools",
             img: "/gui/static/images/logo/tools.png",
             isOpen:true,
             order: 5,
