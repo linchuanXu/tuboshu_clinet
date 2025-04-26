@@ -3,6 +3,12 @@ import windowManager from './../windowManager.js'
 import viewManager from "./../viewManager.js";
 import storeManager from "../store/storeManager.js";
 
+const STATUS = Object.freeze({
+    NORMAL: 1,
+    COPY: 3,
+    PASTE: 5,
+    LINK:7,
+});
 class ContextManager {
     constructor() {
         if (ContextManager.instance) return ContextManager.instance;
@@ -13,7 +19,7 @@ class ContextManager {
     createContextMenu() {
         ipcMain.on('popup:contextMenu', (e, pos) => {
             if(storeManager.getSetting('isOpenContextMenu')){
-                this.popupContextMenu(pos.x, pos.y, pos.copy, pos.paste);
+                this.popupContextMenu(pos.x, pos.y, pos.status);
             }
         })
 
@@ -31,7 +37,7 @@ class ContextManager {
             this.goHome();
         })
     }
-    popupContextMenu(posX, posY, isCopy, isPaste) {
+    popupContextMenu(posX, posY, status) {
         this.clearUselessHistoryRecord();
         const win = windowManager.getWindow();
         const view = viewManager.getActiveView();
@@ -39,7 +45,7 @@ class ContextManager {
 
         const template = [];
 
-        if(isCopy === false){
+        if(status === STATUS.NORMAL){
             if(history.canGoBack()){
                 template.push({ label: '后退', click: () => this.goBack()})
             }
@@ -59,16 +65,19 @@ class ContextManager {
                 template.push({ type: 'separator' })
                 template.push({ label: '开发者工具', click: () => view.object.webContents.openDevTools() })
             }
-        }else{
-            if(isPaste === true && this.isClipboardEmpty() === false){
-                template.push({ label: '粘贴', role: 'paste' })
-                //template.push({ label: '剪贴', role: 'cut' })
-            }
+        }
 
+        if(status === STATUS.COPY){
             template.push({ label: '复制', role: 'copy' })
             template.push({ label: '全选', role: 'selectAll' })
         }
 
+        if(status === STATUS.PASTE){
+            template.push({ label: '粘贴', role: 'paste' })
+            //template.push({ label: '剪贴', role: 'cut' })
+            template.push({ label: '复制', role: 'copy' })
+            template.push({ label: '全选', role: 'selectAll' })
+        }
 
         this.contextMenu = Menu.buildFromTemplate(template)
         this.contextMenu.popup({ window:win, x:posX, y:posY})
