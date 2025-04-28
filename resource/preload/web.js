@@ -38,9 +38,9 @@ window.addEventListener('contextmenu', (e) => {
         ipcRenderer.send("popup:contextMenu", Object.assign(data, {status:3}))
         return;
     }
+
     const isInputElement = ['INPUT', 'TEXTAREA'].includes(e.target.tagName);
     const isContentEditable = e.target.isContentEditable;
-
     if(isInputElement || isContentEditable){
         ipcRenderer.send("popup:contextMenu", Object.assign(data, {status:5}))
         return;
