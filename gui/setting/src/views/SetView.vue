@@ -10,6 +10,7 @@ const howLinkOpenMethod = ref('tuboshu')
 const isMenuVisible = ref(true)
 const isOpenDevTools = ref(false)
 const isOpenZoom = ref(true)
+const isAutoLaunch = ref(false)
 const isOpenContextMenu = ref(true)
 const defaultWindowSize = ref({width: 800, height: 600})
 
@@ -53,6 +54,7 @@ onMounted(async () => {
   isOpenDevTools.value = getValue('isOpenDevTools', settings);
   isOpenZoom.value = getValue('isOpenZoom', settings);
   isOpenContextMenu.value = getValue('isOpenContextMenu', settings);
+  isAutoLaunch.value = getValue('isAutoLaunch', settings);
   defaultWindowSize.value = getValue('defaultWindowSize', settings);
   howLinkOpenMethod.value = getValue('howLinkOpenMethod', settings);
 })
@@ -90,6 +92,12 @@ const changeContextMenu= (val) => {
   window.myApi.updateSetting({ name : 'isOpenContextMenu', value: val ? 1 : 0});
   message.success(`设置已更新,请重新启动`)
 }
+
+const changeAutoLaunch= (val) => {
+  window.myApi.updateSetting({ name : 'isAutoLaunch', value: val ? 1 : 0});
+  message.success(`设置已更新,请重新启动`)
+}
+
 
 const changeTheme = (e) => {
   window.myApi.updateSetting({ name : 'systemTheme', value: e.target.value});
@@ -151,10 +159,6 @@ const handleWinChange = (e) => {
       <n-h3 style="margin-bottom: 0;">通用设置</n-h3>
     </n-alert>
 
-    <n-alert :show-icon="false">
-      1.设置改变后，重启程序才能生效。<br>
-    </n-alert>
-
     <n-card embedded :bordered="true" style="margin-top:1rem;">
       <div class="wrap">
 
@@ -174,6 +178,17 @@ const handleWinChange = (e) => {
           </div>
         </div>
 
+        <div class="card">
+          <div class="vleft">开机启动：</div>
+          <div class="vright">
+            <n-switch size="medium"
+                      v-model:value="isAutoLaunch"
+                      @update:value="changeAutoLaunch" style="font-size:12px;" >
+              <template #checked>开启</template>
+              <template #unchecked>关闭</template>
+            </n-switch>
+          </div>
+        </div>
         <div class="card">
           <div class="vleft">调试模式：</div>
           <div class="vright">
@@ -200,11 +215,11 @@ const handleWinChange = (e) => {
         </div>
 
         <div class="card">
-          <div class="vleft">内存优化：</div>
+          <div class="vleft">页面缩放：</div>
           <div class="vright">
             <n-switch size="medium"
-              v-model:value="isMemoryOptimizationEnabled"
-              @update:value="changeOptimize" style="font-size:12px;" >
+                      v-model:value="isOpenZoom"
+                      @update:value="changeZoom" style="font-size:12px;" >
               <template #checked>开启</template>
               <template #unchecked>关闭</template>
             </n-switch>
@@ -212,11 +227,11 @@ const handleWinChange = (e) => {
         </div>
 
         <div class="card">
-          <div class="vleft">页面缩放：</div>
+          <div class="vleft">内存优化：</div>
           <div class="vright">
             <n-switch size="medium"
-                      v-model:value="isOpenZoom"
-                      @update:value="changeZoom" style="font-size:12px;" >
+                      v-model:value="isMemoryOptimizationEnabled"
+                      @update:value="changeOptimize" style="font-size:12px;" >
               <template #checked>开启</template>
               <template #unchecked>关闭</template>
             </n-switch>

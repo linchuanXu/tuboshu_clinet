@@ -33,6 +33,7 @@ export default Object.freeze({
         isOpenDevTools:0,
         isOpenZoom:1,
         isOpenContextMenu:1,
+        isAutoLaunch:0,
         leftMenuPosition:'left',
         systemTheme:'system',
         howLinkOpenMethod:"tuboshu"

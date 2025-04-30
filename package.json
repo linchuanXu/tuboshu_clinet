@@ -16,7 +16,7 @@
   "license": "ISC",
   "description": "tuboshu",
   "devDependencies": {
-    "electron": "^35.1.2",
+    "electron": "^36.0.0",
     "electron-builder": "^26.0.12",
     "electron-vite": "^3.1.0"
   },
@@ -47,12 +47,16 @@
       {
         "from": "./resource/plugin",
         "to": "plugin",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "./resource/lnk",
         "to": "lnk",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "asar": true,

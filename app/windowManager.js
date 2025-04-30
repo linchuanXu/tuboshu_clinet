@@ -9,6 +9,7 @@ import dataExport from './utility/dataExport.js'
 import winLnk from "./utility/winLnk.js";
 import Layout from "./utility/layout.js"
 import Utility from "./utility/utility.js";
+import AutoLaunch from "./utility/autoLaunch.js"
 
 class WindowManager{
 
@@ -262,6 +263,9 @@ class WindowManager{
             if (setting.name === "isOpenDevTools"){
                 this.closeHideSites();
             }
+            if (setting.name === "isAutoLaunch"){
+                AutoLaunch.initAutoLaunch();
+            }
         });
 
         ipcMain.handle('get:favicon', async (event, name) => {
@@ -269,14 +273,9 @@ class WindowManager{
                 const manager = await lokiManager;
                 const site = manager.getSite(name);
 
-                let iconData= storeManager.get(site.url)
-                if (!iconData) {
-                    const faviconUrl = await fetchIcon.getFaviconUrl(site.url);
-                    iconData = await fetchIcon.fetchFaviconAsBase64(faviconUrl);
-                }
-
+                const faviconUrl = await fetchIcon.getFaviconUrl(site.url);
+                const iconData = await fetchIcon.fetchFaviconAsBase64(faviconUrl);
                 manager.updateSite(Object.assign(site, {img: iconData}))
-                storeManager.set(site.url, iconData);
 
                 this.menuView.webContents.reload();
                 return {ret:0, data:iconData};
@@ -374,22 +373,11 @@ class WindowManager{
     setSystemTheme(){
         nativeTheme.themeSource = storeManager.getSetting('systemTheme');
     }
-    gotoSetting(){
-        lokiManager.then((manager) => {
-            const menu = manager.getGroupMenus();
-            if(menu.openMenus.length > 0){
-                this.menuView.webContents.send('auto:click', menu.openMenus[0]);
-            }else{
-                this.menuView.webContents.send('auto:click', menu.setMenus[0]);
-            }
-        })
-    }
 
     afterCloseSitePage() {
         const site = {url:CONS.APP.CLOSE_SITE_URL,  name:CONS.APP.CLOSE_SITE_NAME};
         this.menuView.webContents.send('auto:click', site);
     }
-
 
     uselessSiteCleaner(){
         const res = storeManager.getSetting('isMemoryOptimizationEnabled');

@@ -4,6 +4,7 @@ import windowManager from './windowManager.js'
 import trayManager from'./trayManager.js'
 import shortcutManager from './shortcut/shortcutManager.js'
 import contextManager from "./context/contextManager.js"
+import AutoLaunch from "./utility/autoLaunch.js"
 
 // app.disableHardwareAcceleration();
 //app.commandLine.appendSwitch('disable-gpu');
@@ -17,7 +18,6 @@ app.commandLine.appendSwitch('lang', 'zh-CN');
 
 app.commandLine.appendSwitch('disable-blink-features', 'AutomationControlled')
 app.commandLine.appendSwitch('disable-features', 'IsolateOrigins,site-per-process')
-
 
 if(process.env.PORTABLE_EXECUTABLE_DIR){
   app.setPath('userData', path.join(process.env.PORTABLE_EXECUTABLE_DIR, 'tuboshu-user-data'))
@@ -34,6 +34,7 @@ app.whenReady().then(() => {
   trayManager.createTray();
   shortcutManager.initShortcuts();
   contextManager.createContextMenu();
+  AutoLaunch.initAutoLaunch();
 })
 
 
