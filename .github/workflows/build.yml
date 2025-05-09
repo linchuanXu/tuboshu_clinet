@@ -95,11 +95,9 @@ jobs:
           pattern: build-*
           path: artifacts
 
-      - name: Create Release To Tubushu
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          repository: deepshit2025/tuboshu
-          token: ${{ secrets.TUBOSHU_TOKEN }}
           tag_name: ${{ github.ref }}
           name: Release ${{ github.ref_name }}
           files: "artifacts/**/*"
