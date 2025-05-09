@@ -1,4 +1,4 @@
-import { app, screen} from 'electron'
+import { app, clipboard, screen} from 'electron'
 import windowManager from '../windowManager.js'
 import trayManager from '../trayManager.js'
 import viewManager from '../viewManager.js'
@@ -186,6 +186,11 @@ class ShortcutManager{
         if(!win.isVisible()) win.show();
         let winWidth = width/3;
         win.setBounds({x:width-winWidth, y:0, width:winWidth, height:height})
+    }
+
+    getCurrentPageUrl(){
+        const url =  viewManager.getActiveView().object.webContents.getURL();
+        clipboard.writeText(url);
     }
 
     isMenuVisible(){

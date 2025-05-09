@@ -4,15 +4,15 @@ const settings = ref({})
 
 const isEdgeAdsorption = ref(false)
 const isMemoryOptimizationEnabled = ref(false)
+const isOpenDevTools = ref(false)
+const isOpenZoom = ref(false)
+const isAutoLaunch = ref(false)
+const isMenuVisible = ref(true)
+const isOpenContextMenu = ref(true)
 const systemTheme = ref("system")
 const leftMenuPosition = ref('left')
 const howLinkOpenMethod = ref('tuboshu')
-const isMenuVisible = ref(true)
-const isOpenDevTools = ref(false)
-const isOpenZoom = ref(true)
-const isAutoLaunch = ref(false)
-const isOpenContextMenu = ref(true)
-const defaultWindowSize = ref({width: 800, height: 600})
+const defaultWindowSize = ref({width: 1024, height: 800})
 
 const version = ref({
   version: '加载中...',

@@ -210,6 +210,13 @@ export default Object.freeze({
             isOpen:true,
         },
         {
+            tag: "获取当前页URL",
+            name: "getCurrentPageUrl",
+            cmd: "CommandOrControl+Shift+L",
+            isGlobal:false,
+            isOpen:false,
+        },
+        {
             tag: "最小化窗口",
             name: "windowMinimize",
             cmd: "CommandOrControl+[",

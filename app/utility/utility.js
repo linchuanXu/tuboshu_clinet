@@ -39,7 +39,7 @@ class Utility {
             if (!entry.isDirectory() || !entry.name.endsWith('.ext')) continue;
             const extPath = path.join(extensionsDir, entry.name);
             try {
-                await sess.loadExtension(extPath);
+                await sess.extensions.loadExtension(extPath);
                 console.log(`Successfully loaded extension: ${extPath}`);
             } catch (err) {
                 console.error(`Failed to load extension ${extPath}:`, err);
