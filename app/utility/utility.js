@@ -19,6 +19,9 @@ const getDomain = (url) => {
 class Utility {
     constructor() {}
     static isMainDomainEqual (url1, url2) {
+        if(url1.toLowerCase().indexOf('upsort') !== -1){
+            return false;
+        }
         return getDomain(url1) === getDomain(url2);
     }
 
