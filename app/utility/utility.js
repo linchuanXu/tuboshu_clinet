@@ -51,7 +51,7 @@ class Utility {
     static selectAppropriatePreload(url){
         const isHttpAddr = url.toLowerCase().startsWith("http");
         let preloadjs = isHttpAddr ? "web.js" : "setting.js";
-        if(url.toLowerCase().includes("http://localhost:")){
+        if(url.toLowerCase().includes("http://localhost:")|| url.toLowerCase().includes("http://tuboshu")){
             preloadjs = "setting.js"
         }else if(url.toLowerCase().includes('transfer.html')){
             preloadjs = "transfer.js"

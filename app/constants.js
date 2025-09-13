@@ -6,9 +6,10 @@ const ___filename = fileURLToPath(import.meta.url);
 const ___dirname =  path.dirname(___filename);
 
 const appPath = path.join(___dirname, '..');
-const SETTING_URL = app.isPackaged
-    ? `file://${path.join(appPath, 'gui/dist/index.html')}`
-    : 'http://localhost:5173/';
+// const SETTING_URL = app.isPackaged
+//     ? `file://${path.join(appPath, 'gui/dist/index.html')}`
+//     : 'http://localhost:5173/';
+const SETTING_URL = app.isPackaged ? 'http://tuboshu.upsort.com' : 'http://localhost:5173/';
 
 export default Object.freeze({
     APP:{
@@ -27,7 +28,7 @@ export default Object.freeze({
             height: 768,
         },
         defaultMenuWidth: 50,
-        isWindowEdgeAdsorption: 1,
+        isWindowEdgeAdsorption: 0,
         isMemoryOptimizationEnabled:1,
         isMenuVisible:1,
         isOpenDevTools:0,

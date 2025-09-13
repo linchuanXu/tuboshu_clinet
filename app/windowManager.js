@@ -1,15 +1,17 @@
 import {app, BaseWindow, View, screen, ipcMain, clipboard, WebContentsView, nativeTheme} from 'electron'
 import viewManager from './viewManager.js'
-import lokiManager from './store/lokiManager.js'
+import tbsDbManager from './store/tbsDbManager.js'
 import storeManager from './store/storeManager.js'
 import eventManager from './eventManager.js'
 import fetchIcon from './utility/fetchIcon.js'
 import CONS from './constants.js'
 import dataExport from './utility/dataExport.js'
+import dataSync from './utility/dataSync.js'
 import winLnk from "./utility/winLnk.js";
 import Layout from "./utility/layout.js"
 import Utility from "./utility/utility.js";
 import AutoLaunch from "./utility/autoLaunch.js"
+
 
 class WindowManager{
 
@@ -83,6 +85,7 @@ class WindowManager{
 
         winLnk.bindIpcMain();
         dataExport.bindIpcMain();
+        dataSync.bindIpcMain();
 
         ipcMain.handle('handle:menu', async (event, hide) => {
             if(hide === true){
@@ -103,19 +106,19 @@ class WindowManager{
         });
 
         ipcMain.handle('get:menu', async (event, ...args) => {
-            const manager = await lokiManager;
-            return manager.getMenus()
+            
+            return tbsDbManager.getMenus()
         });
 
         ipcMain.handle('get:groupMenus', async (e) => {
-            const manager = await lokiManager;
-            return manager.getGroupMenus()
+            
+            return tbsDbManager.getGroupMenus()
         });
 
 
         ipcMain.handle('get:shortcuts', async (event, ...args) => {
-            const manager = await lokiManager;
-            return manager.getShortcuts()
+            
+            return tbsDbManager.getShortcuts()
         });
 
         ipcMain.handle('get:settings', (event, ...args) => {
@@ -123,14 +126,14 @@ class WindowManager{
         });
 
         ipcMain.handle('update:shortcut', async (event, shortcut) => {
-            const manager = await lokiManager;
-            const oldShortcut = manager.getShortcut(shortcut.name);
+            
+            const oldShortcut = tbsDbManager.getShortcut(shortcut.name);
 
             const data = {shortcut, oldShortcut}
             const result = await eventManager.send('replace:shortcut', data)
 
             if(result === true){
-                manager.updateShortcut(shortcut);
+                tbsDbManager.updateShortcut(shortcut);
                 return {code:0, data:shortcut, msg:"操作成功！"}
             }else{
                 return {code:1, data:oldShortcut, msg:"操作失败！"};
@@ -197,51 +200,50 @@ class WindowManager{
 
         //更新左边导航栏
         ipcMain.on('update:menu', async (event, menu) => {
-            const manager = await lokiManager;
-            manager.updateSite(menu);
+
+            tbsDbManager.updateSite(menu);
             this.closeHideSites();
             this.menuView.webContents.reload();
         });
 
         //批量更新排序
         ipcMain.handle('batch:menus', async (event, menus) => {
-            const manager = await lokiManager;
-            manager.batchUpdateSite(menus);
+
+            tbsDbManager.batchUpdateSite(menus);
             this.closeHideSites();
             this.menuView.webContents.reload();
         });
 
         //新增左边导航栏
         ipcMain.on('add:menu', async (event, menu) => {
-            const manager = await lokiManager;
-            manager.addSite(menu);
+
+            tbsDbManager.addSite(menu);
             this.closeHideSites();
             this.menuView.webContents.reload();
         });
 
         //删除左边导航栏
         ipcMain.on('remove:menu', async (event, menu) => {
-            const manager = await lokiManager;
-            manager.removeSite(menu);
+
+            tbsDbManager.removeSite(menu);
             this.menuView.webContents.reload();
             this.closeHideSites();
         });
 
         ipcMain.handle('get:groups', async () => {
-            const manager = await lokiManager;
-            return manager.getGroups()
+            return tbsDbManager.getGroups()
         })
 
         ipcMain.handle('update:group', async (event, group) => {
-            const manager = await lokiManager;
-            manager.updateGroup(group)
+
+            tbsDbManager.updateGroup(group)
             this.menuView.webContents.reload();
             return true;
         })
 
         ipcMain.handle('remove:group', async (event, group) => {
-            const manager = await lokiManager;
-            manager.removeGroup(group)
+
+            tbsDbManager.removeGroup(group)
             this.menuView.webContents.reload();
             return true;
         })
@@ -270,12 +272,10 @@ class WindowManager{
 
         ipcMain.handle('get:favicon', async (event, name) => {
             try {
-                const manager = await lokiManager;
-                const site = manager.getSite(name);
-
+                const site = tbsDbManager.getSite(name);
                 const faviconUrl = await fetchIcon.getFaviconUrl(site.url);
                 const iconData = await fetchIcon.fetchFaviconAsBase64(faviconUrl);
-                manager.updateSite(Object.assign(site, {img: iconData}))
+                tbsDbManager.updateSite(Object.assign(site, {img: iconData}))
 
                 this.menuView.webContents.reload();
                 return {ret:0, data:iconData};
@@ -384,20 +384,18 @@ class WindowManager{
         if(!res) return;
 
         const currentView = viewManager.getActiveView();
-        lokiManager.then((manager) => {
-            const urls = manager.getGroupMenus().openMenus.map(item => item.url);
-            viewManager.views = viewManager.views.filter(view => {
-                if(currentView.name === view.name) return true;
+        const urls = tbsDbManager.getGroupMenus().openMenus.map(item => item.url);
+        viewManager.views = viewManager.views.filter(view => {
+            if(currentView.name === view.name) return true;
 
-                const notInMenu = !urls.includes(view.url);
-                const overTime = Math.floor((Date.now() - view.time) / 1000) > 600;
+            const notInMenu = !urls.includes(view.url);
+            const overTime = Math.floor((Date.now() - view.time) / 1000) > 600;
 
-                if (notInMenu || overTime) {
-                    viewManager.clearView(view)
-                    return false;
-                }
-                return true;
-            })
+            if (notInMenu || overTime) {
+                viewManager.clearView(view)
+                return false;
+            }
+            return true;
         })
 
         clearTimeout(this.cleanupTimer);
@@ -406,16 +404,14 @@ class WindowManager{
 
     closeHideSites(){
         const currentView = viewManager.getActiveView();
-        lokiManager.then((manager) => {
-            const urls = manager.getGroupMenus().openMenus.map(item => item.url);
-            viewManager.views = viewManager.views.filter(view => {
-                if(currentView.name === view.name) return true;
-                if(!urls.includes(view.url)){
-                    viewManager.clearView(view)
-                    return false;
-                }
-                return true;
-            })
+        const urls = tbsDbManager.getGroupMenus().openMenus.map(item => item.url);
+        viewManager.views = viewManager.views.filter(view => {
+            if(currentView.name === view.name) return true;
+            if(!urls.includes(view.url)){
+                viewManager.clearView(view)
+                return false;
+            }
+            return true;
         })
     }
 

@@ -1,5 +1,5 @@
-import { app} from 'electron'
 import path from 'path'
+import { app } from 'electron'
 import windowManager from './windowManager.js'
 import trayManager from'./trayManager.js'
 import shortcutManager from './shortcut/shortcutManager.js'

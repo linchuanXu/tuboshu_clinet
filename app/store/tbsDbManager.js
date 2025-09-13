@@ -1,10 +1,10 @@
 import {app, nativeImage} from 'electron'
 import crypto from 'crypto'
 import path from 'path'
-import Loki from 'sylviejs'
+import TbsDB from  './TuboshuDb.js'
 import CONS from '../constants.js'
 
-const dbPath = path.join(app.getPath('userData'), 'data.db');
+const dbPath = path.join(app.getPath('userData'), 'userdata.db');
 const md5Hash = (data) => crypto.createHash('md5').update(data).digest('hex');
 const processImg = (menuArray) => menuArray.map(element => {
     if(element.img.startsWith("data:")) return element;
@@ -15,32 +15,15 @@ const processImg = (menuArray) => menuArray.map(element => {
     return { ...element, img: Img.toDataURL()};
 });
 
-class LokiManager {
+class TbsDbManager {
 
-    constructor(db) {
-        this.db = db;
+    constructor() {
+        this.db = TbsDB.getInstance(dbPath, {autoload:true})
+        this.initializeCollections()
     }
-
-    static async create() {
-        const db = await new Promise((resolve, reject) => {
-            const dbInstance = new Loki(dbPath, {
-                autoload: true,
-                autoloadCallback: () => {
-                    resolve(dbInstance);
-                },
-                autosave: false,
-                autosaveInterval: 1000,
-            });
-        });
-
-        const manager = new LokiManager(db);
-        manager.initializeCollections();
-        return manager;
-    }
-
     initializeCollections(){
         if (!this.db.getCollection('sites')) {
-            const sitesCollection = this.db.addCollection('sites', { indices: ['name'], unique: ['name'] });
+            const sitesCollection = this.db.addCollection('sites', {unique: ['name'] });
             if (sitesCollection.count() === 0) {
                 sitesCollection.insert(CONS.SITES);
                 this.db.saveDatabase();
@@ -48,19 +31,22 @@ class LokiManager {
         }
 
         if (!this.db.getCollection('shortcuts')) {
-            const sitesCollection = this.db.addCollection('shortcuts', { indices: ['name'], unique: ['name'] });
+            const sitesCollection = this.db.addCollection('shortcuts', { unique: ['name'] });
             if (sitesCollection.count() === 0) {
                 sitesCollection.insert(CONS.SHORTCUT);
-                this.db.saveDatabase();
             }
         }
 
         if (!this.db.getCollection('groups')) {
-            this.db.addCollection('groups', { indices: ['name'], unique: ['name'] });
+            this.db.addCollection('groups', {unique: ['name'] });
         }
 
         if (!this.db.getCollection('lnks')) {
-            this.db.addCollection('lnks', { indices: ['name'], unique: ['name'] });
+            this.db.addCollection('lnks', {unique: ['name'] });
+        }
+
+        if (!this.db.getCollection('setting')) {
+            this.db.addCollection('setting', { unique: ['name'] });
         }
     }
 
@@ -73,7 +59,6 @@ class LokiManager {
     clearSites() {
         const sitesCollection = this.db.getCollection('sites');
         sitesCollection.clear();
-        this.db.saveDatabase();
     }
 
     getSite(name) {
@@ -86,14 +71,12 @@ class LokiManager {
         site.order = sitesCollection.count() + 1;
         site.name = md5Hash(site.name+String(Date.now()));
         sitesCollection.insert(site);
-        this.db.saveDatabase();
         return site;
     }
 
     updateSite(site) {
         const sitesCollection = this.db.getCollection('sites');
         sitesCollection.findAndUpdate({name: site.name}, (doc)=>{Object.assign(doc, site)});
-        this.db.saveDatabase();
     }
 
     batchUpdateSite(sites) {
@@ -106,7 +89,6 @@ class LokiManager {
     removeSite(site) {
         const sitesCollection = this.db.getCollection('sites');
         sitesCollection.findAndRemove({name: site.name});
-        this.db.saveDatabase();
     }
 
     getMenus() {
@@ -144,13 +126,13 @@ class LokiManager {
     updateShortcut(shortcut) {
         const shortcutCollection = this.db.getCollection('shortcuts');
         shortcutCollection.findAndUpdate({name: shortcut.name}, (doc)=>{Object.assign(doc, shortcut)});
-        return this.db.saveDatabase();
+        return true;
     }
 
     addShortcut(shortcut) {
         const shortcutCollection = this.db.getCollection('shortcuts');
         shortcutCollection.insert(shortcut);
-        return this.db.saveDatabase();
+        return true;
     }
 
     getGroups() {
@@ -162,7 +144,7 @@ class LokiManager {
         if(!group.name || !groupsCollection.findOne({name: group.name})){
             group.name = md5Hash(String(Date.now()));
             groupsCollection.insert(group);
-            return this.db.saveDatabase();
+            return true;
         }
 
         if(group.isOpen === true){
@@ -171,10 +153,9 @@ class LokiManager {
                 doc.isOpen = false;
                 groupsCollection.update(doc)
             })
-            this.db.saveDatabase();
         }
         groupsCollection.findAndUpdate({name: group.name}, (doc)=>{Object.assign(doc, group)});
-        return this.db.saveDatabase();
+        return true
     }
 
     getOpenGroup() {
@@ -189,26 +170,22 @@ class LokiManager {
             doc.isOpen = false;
             groupsCollection.update(doc)
         })
-        this.db.saveDatabase();
     }
 
     removeGroup(group) {
         const groupsCollection = this.db.getCollection('groups');
         groupsCollection.findAndRemove({name: group.name});
-        return this.db.saveDatabase();
     }
 
     addLnk(lnk) {
         const lnkCollection = this.db.getCollection('lnks');
         lnk.order = lnkCollection.count() + 1;
         lnkCollection.insert(lnk);
-        return this.db.saveDatabase();
     }
 
     removeLnk(lnk) {
         const lnkCollection = this.db.getCollection('lnks');
         lnkCollection.findAndRemove({name: lnk.name});
-        return this.db.saveDatabase();
     }
 
     getLnks() {
@@ -220,7 +197,40 @@ class LokiManager {
         const lnkCollection = this.db.getCollection('lnks');
         return lnkCollection.count()
     }
+
+    addSetting(key, val){
+        const settingCollection = this.db.getCollection('setting');
+        settingCollection.insert({name:key, value:val});
+    }
+
+    getSetting(key){
+        const settingCollection = this.db.getCollection('setting');
+        const setting = settingCollection.findOne({name:key});
+        return setting?.value
+    }
+
+    hasSetting(key){
+        const settingCollection = this.db.getCollection('setting');
+        return settingCollection.findOne({name:key}) !== undefined
+    }
+
+    updateSetting(key, val){
+        const settingCollection = this.db.getCollection('setting');
+        if(settingCollection.findOne({name:key}) !== undefined){
+            settingCollection.findAndUpdate({name: key}, doc => { doc.value = val })
+        }else{
+            settingCollection.insert({name:key, value:val});
+        }
+    }
+
+    getAllConfigData(){
+        return this.db.getAllData()
+    }
+
+    restoreAllConfigData(newData){
+        this.db.replaceAllData(newData)
+    }
+
 }
 
-// 使用方式
-export default LokiManager.create();
+export default new TbsDbManager();

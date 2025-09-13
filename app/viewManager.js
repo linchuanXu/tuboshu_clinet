@@ -1,6 +1,6 @@
 import {WebContentsView, session, shell} from 'electron'
 import eventManager from './eventManager.js'
-import lokiManager from './store/lokiManager.js'
+import tbsDbManager from './store/tbsDbManager.js'
 import fingerPrint from "./disguise/fingerPrint.js";
 import storeManager from "./store/storeManager.js";
 import CONS from './constants.js'
@@ -101,11 +101,11 @@ class ViewManager {
         view.webContents.setZoomLevel(0)
         this.renderProcessGone(view);
         this.injectJsCode(view, name);
-        this.setProxy(mySession, name).then(()=>{
-            Utility.loadWithLoading(view, url).then(()=>{
-                eventManager.emit('set:title', view.webContents.getTitle());
-            })
-        });
+        this.setProxy(mySession, name)
+
+        Utility.loadWithLoading(view, url).then(()=>{
+            eventManager.emit('set:title', view.webContents.getTitle());
+        })
 
         if(storeManager.getSetting('isOpenDevTools')){
             view.webContents.openDevTools({mode: 'right',activate: true})
@@ -162,8 +162,8 @@ class ViewManager {
 
     injectJsCode(view, name){
         view.webContents.on('dom-ready',async ()=>{
-            const manager = await lokiManager;
-            const site = manager.getSite(name);
+            
+            const site = tbsDbManager.getSite(name);
             if(site && Object.hasOwn(site,'jsCode') && site.jsCode.length > 0){
                 const code = Utility.appendJsCode(JSON.stringify(site.jsCode))
                 await view.webContents.executeJavaScript(code);
@@ -171,13 +171,10 @@ class ViewManager {
         })
     }
 
-    async setProxy(mySession, name) {
-        const manager = await lokiManager;
-        const site = manager.getSite(name);
+    setProxy(mySession, name) {
+        const site = tbsDbManager.getSite(name);
         if(site && Object.hasOwn(site,'proxy') && site.proxy.length > 10){
-            mySession.setProxy({
-                proxyRules: site.proxy,
-            });
+            mySession.setProxy({proxyRules: site.proxy,});
         }
     }
 

@@ -1,7 +1,7 @@
 import {dialog, ipcMain, app} from 'electron'
 import path from 'path'
 import fs from 'fs/promises';
-import lokiManager from './../store/lokiManager.js'
+import tbsDbManager from '../store/tbsDbManager.js'
 
 
 
@@ -38,21 +38,21 @@ class DataExport {
     }
 
     async getConfigData() {
-        const manager = await lokiManager;
-        const data = manager.getSites();
+        
+        const data = tbsDbManager.getSites();
         return data.map(item => this.filterObjectProperties(item));
     }
 
     async importConfigData(data) {
         this.validateInputData(data);
 
-        const manager = await lokiManager;
+        
         const total = data.reduce((acc, item) => {
             if (!this.isValidUrl(item.url) || !item.tag?.trim()) return acc;
-            if (item.name && manager.getSite(item.name)) return acc;
+            if (item.name && tbsDbManager.getSite(item.name)) return acc;
 
             const processedItem = this.filterObjectProperties(item);
-            manager.addSite(processedItem);
+            tbsDbManager.addSite(processedItem);
             return acc + 1;
         }, 0);
         return total;

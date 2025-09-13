@@ -1,6 +1,6 @@
 {
   "name": "tuboshu",
-  "version": "v2.0.8",
+  "version": "v2.1.0",
   "main": "out/main.js",
   "type": "module",
   "scripts": {
@@ -21,9 +21,7 @@
     "electron-vite": "^3.1.0"
   },
   "dependencies": {
-    "conf": "^13.1.0",
-    "fingerprint-generator": "^2.1.63",
-    "sylviejs": "^0.0.19"
+    "fingerprint-generator": "^2.1.63"
   },
   "build": {
     "appId": "com.tuboshu.tuboshu",

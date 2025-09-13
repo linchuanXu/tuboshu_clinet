@@ -1,19 +1,19 @@
-import {app} from "electron"
-import Conf from 'conf'
+// import {app} from "electron"
+ // import Conf from 'conf'
+import tbsDbManager from './tbsDbManager.js'
 import CONS from './../constants.js'
-
 
 class StoreManager{
     constructor() {
-        this.store = new Conf({cwd:app.getPath('userData')});
+        this.store = tbsDbManager;
     }
 
     get(key) {
-        return this.store.get(key);
+        return this.store.getSetting(key);
     }
 
     set(key, value) {
-        this.store.set(key, value);
+        this.store.addSetting(key, value);
     }
 
     getSettings(){
@@ -23,14 +23,14 @@ class StoreManager{
     }
 
     getSetting(key){
-        if(this.store.has(key)){
-            return this.store.get(key);
+        if(this.store.hasSetting(key)){
+            return this.store.getSetting(key);
         }
         return CONS.CONFIG[key]
     }
 
     updateSetting(setting){
-        return this.store.set(setting.name, setting.value);
+        return this.store.updateSetting(setting.name, setting.value);
     }
 }
 

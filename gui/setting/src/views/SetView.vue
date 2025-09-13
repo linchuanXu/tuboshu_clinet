@@ -1,7 +1,11 @@
 <script setup>
+import iconCancel from "@/components/icons/cancel.vue";
 const message = useMessage();
 const settings = ref({})
 
+const isShow = ref(false);
+const btnLoading = ref(false);
+const btnText = ref("清除缓存");
 const isEdgeAdsorption = ref(false)
 const isMemoryOptimizationEnabled = ref(false)
 const isOpenDevTools = ref(false)
@@ -151,6 +155,24 @@ const handleWinChange = (e) => {
   window.myApi.updateSetting({ name : 'defaultWindowSize', value: setting});
   message.success(`设置已更新,请重新启动`)
 }
+
+const handleBtnClick = async ()=> {
+  btnLoading.value = true;
+  btnText.value = '正在清除缓存';
+  await window.myApi.clearCache()
+  setTimeout(() => {
+    btnLoading.value = false;
+    btnText.value = '清除缓存';
+    message.success(`Tuboshu缓存已清除`)
+    }, 2e3);
+}
+const  handleSponsorClick = () =>{
+  isShow.value = true;
+}
+const handleClose = () =>{
+  isShow.value = false;
+}
+
 </script>
 
 <template>
@@ -314,20 +336,48 @@ const handleWinChange = (e) => {
     </n-card>
 
     <n-card embedded :bordered="true" style="margin-top: 20px;">
+      <n-button :loading="btnLoading" @click="handleBtnClick">{{btnText}}</n-button>
+    </n-card>
+
+    <n-card embedded :bordered="true" style="margin-top: 20px;">
       <span style="padding-right: 20px;">
         当前版本: <n-tag :bordered="false" type="info" size="medium">{{version.version}}</n-tag>
       </span>
       <span style="padding-right: 20px;">
           最新版本: <n-tag :bordered="false" type="info" size="medium">{{version.newVersion}}</n-tag>
-        </span>
+      </span>
       <span>
           获取新版：
         <n-tag :bordered="false" type="info" size="medium" style="margin-right: 20px;">
           <a target="_blank" :href="version.github">GitHub下载</a>
         </n-tag>
-        <n-tag :bordered="false" type="error" size="medium"><a target="_blank" :href="version.download">国内下载</a></n-tag>
-        </span>
+        <n-tag :bordered="false" type="error" size="medium">
+          <a target="_blank" :href="version.download">国内下载</a>
+        </n-tag>
+      </span>
+      <span style="padding-left: 20px;">
+          <n-tag :bordered="false" @click="handleSponsorClick" type="info" size="medium">赞助作者</n-tag>
+      </span>
     </n-card>
+
+    <n-drawer :show="isShow" v-model:show="isShow" :width="402" placement="right">
+      <n-drawer-content title="支持作者" closable>
+        <n-alert :show-icon="false">
+          <div class="flex-box">
+          <p style="color:#666; padding: 30px;">
+            如果本软件对您有帮助，请赞助作者<br>
+            如有定制功能的需求，欢迎咨询...
+          </p>
+          <img class="pay" src="https://upsort.com/pay/weixin.png"  alt="微信支付"/>
+          <br />
+          <img class="pay" src="https://upsort.com/pay/zhifubao.png"  alt="微信支付"/>
+        </div>
+        </n-alert>
+        <template #footer>
+          <div class="flex-footer"></div>
+        </template>
+      </n-drawer-content>
+    </n-drawer>
   </div>
 </template>
 
@@ -338,5 +388,14 @@ const handleWinChange = (e) => {
   min-width: 0;
   gap: 20px;
 }
-
+.pay{
+  width: 300px;
+  padding: 20px;
+}
+.flex-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 </style>

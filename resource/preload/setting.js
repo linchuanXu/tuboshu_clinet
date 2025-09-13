@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld('myApi', {
     addMenu: (menu) => ipcRenderer.send('add:menu', menu),
     removeMenu: (menu) => ipcRenderer.send('remove:menu', menu),
     updateSetting: (setting) => ipcRenderer.send('update:setting', setting),
+
+    clearCache: () => ipcRenderer.send('dataSync:clear:cache'),
+    getAppConfig: () => ipcRenderer.invoke('dataSync:get:data'),
+    restoreAppConfig: (data) => ipcRenderer.send('dataSync:get:data', data),
 });
 
 window.addEventListener('contextmenu', (e) => {

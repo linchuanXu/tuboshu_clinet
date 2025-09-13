@@ -90,22 +90,32 @@ const stopAnimation = ()=>{
 
 <template>
   <div class="wrap">
-    <n-avatar round width="40" :src="icon"/>
-    <div class="link" @click="handleClickOpenSite">
+    <n-avatar @click="handleClickOpenSite" round width="40" :src="icon"/>
+    <div class="link">
       <div> {{ element.tag }}</div>
       <div class="link-url"> {{ element.url }}</div>
     </div>
 
     <div class="getIcon">
-      <span @click="handleClickGetIcon">
-        <n-icon size="30"> <iconRefresh ref="svgIcon" /></n-icon>
-      </span>
+      <n-popover trigger="hover">
+        <template #trigger>
+          <span @click="handleClickGetIcon">
+           <n-icon size="30"> <iconRefresh ref="svgIcon" /></n-icon>
+          </span>
+        </template>
+        <span>点击自动获取图标</span>
+      </n-popover>
     </div>
 
     <div class="jseditor">
-      <span @click="handleClickJsEditor">
-        <n-icon size="30"> <iconJseditor /></n-icon>
-      </span>
+      <n-popover trigger="hover">
+        <template #trigger>
+          <span @click="handleClickJsEditor">
+            <n-icon size="30"> <iconJseditor /></n-icon>
+          </span>
+        </template>
+        <span>页面注入JS代码</span>
+      </n-popover>
     </div>
 
     <div class="options">

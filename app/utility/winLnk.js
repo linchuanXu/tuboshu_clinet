@@ -2,7 +2,7 @@ import {nativeImage, ipcMain, shell} from "electron";
 import { promises as fs } from 'fs'
 import lnkParser from "./parseLnk.js";
 import path from 'path'
-import lokiManager from "../store/lokiManager.js";
+import tbsDbManager from "../store/tbsDbManager.js";
 import CONS from "../constants.js"
 
 
@@ -69,7 +69,7 @@ class winLnk {
 
     async addNewLnk(filePath) {
         try {
-            const manager = await lokiManager;
+
             const pathData = this.convertFilePath(filePath);
             const fileType = await this.checkPathType(pathData);
 
@@ -91,7 +91,7 @@ class winLnk {
                     throw new Error(`Unsupported file type: ${fileType}`);
             }
 
-            await manager.addLnk(lnk);
+            tbsDbManager.addLnk(lnk);
             return lnk;
 
         } catch (error) {
@@ -106,7 +106,7 @@ class winLnk {
     bindIpcMain() {
         //上传lnk
         ipcMain.handle('winLnk:add:lnk', async (event, filePath) => {
-            const manager = await lokiManager;
+            
             if(manager.getLnkCount() >= 8){
                 throw new Error('最多只能添加8个快捷方式');
             }
@@ -115,8 +115,8 @@ class winLnk {
 
         //获取所有lnks数据
         ipcMain.handle('winLnk:get:lnks', async () => {
-            const manager = await lokiManager;
-            return manager.getLnks();
+            
+            return tbsDbManager.getLnks();
         })
 
         //检查文件类型
@@ -129,8 +129,8 @@ class winLnk {
         })
 
         ipcMain.handle('winLnk:remove:lnk', async (event, name) => {
-            const manager = await lokiManager;
-            return manager.removeLnk({name: name});
+            
+            return tbsDbManager.removeLnk({name: name});
         })
     }
 }

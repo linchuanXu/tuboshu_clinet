@@ -2,7 +2,7 @@ import { app, clipboard, screen} from 'electron'
 import windowManager from '../windowManager.js'
 import trayManager from '../trayManager.js'
 import viewManager from '../viewManager.js'
-import lokiManager from '../store/lokiManager.js'
+import tbsDbManager from '../store/tbsDbManager.js'
 import storeManager from '../store/storeManager.js'
 import eventManager from '../eventManager.js'
 import shortcutBase from './shortcutBase.js'
@@ -35,15 +35,13 @@ class ShortcutManager{
 
     initShortcuts(){
         this.resetShortcutsData();
-        lokiManager.then((manager) => {
-            manager.getShortcuts().forEach((shortcut) => {
-                if(shortcut.isOpen === false){
-                    return;
-                }
-                if(!shortcutBase.isRegistered(shortcut.cmd)){
-                    shortcutBase.register(shortcut.cmd, this[shortcut.name].bind(this), shortcut.isGlobal)
-                }
-            })
+        tbsDbManager.getShortcuts().forEach((shortcut) => {
+            if(shortcut.isOpen === false){
+                return;
+            }
+            if(!shortcutBase.isRegistered(shortcut.cmd)){
+                shortcutBase.register(shortcut.cmd, this[shortcut.name].bind(this), shortcut.isGlobal)
+            }
         })
         eventManager.on('replace:shortcut', (data, resolve) => {
             if(data.shortcut.flag === true){
@@ -106,32 +104,26 @@ class ShortcutManager{
         const menuView = windowManager.getMenuView();
         menuView.webContents.focus();
 
-        lokiManager.then((manager) => {
-            const openMenus = manager.getGroupMenus().openMenus;
-            let idx = openMenus.findIndex(item => item.name === view.name);
-            if(openMenus.length === (idx+1))  idx= -1;
-
-            let menuView = windowManager.getMenuView();
-            menuView.webContents.send('auto:click', openMenus[idx+1]);
-        })
+        const openMenus = tbsDbManager.getGroupMenus().openMenus;
+        let idx = openMenus.findIndex(item => item.name === view.name);
+        if(openMenus.length === (idx+1))  idx= -1;
+        menuView.webContents.send('auto:click', openMenus[idx+1]);
     }
 
     groupSiteSwitch(){
         const menuView = windowManager.getMenuView();
         menuView.webContents.focus();
 
-        lokiManager.then((manager) => {
-            const groups = manager.getGroups();
-            if(groups.length === 0) return;
+        const groups = tbsDbManager.getGroups();
+        if(groups.length === 0) return;
 
-            let idx = groups.findIndex(item => item.isOpen === true);
-            if(groups.length === (idx+1)) {
-                manager.resetGroup();
-            }else{
-                manager.updateGroup({name:groups[idx+1].name, isOpen:true})
-            }
-            menuView.webContents.reload();
-        })
+        let idx = groups.findIndex(item => item.isOpen === true);
+        if(groups.length === (idx+1)) {
+            tbsDbManager.resetGroup();
+        }else{
+            tbsDbManager.updateGroup({name:groups[idx+1].name, isOpen:true})
+        }
+        menuView.webContents.reload();
     }
 
     restoreDefaultWindow(){
@@ -203,18 +195,16 @@ class ShortcutManager{
     }
 
     resetShortcutsData(){
-        lokiManager.then((manager) => {
-            CONS.SHORTCUT.forEach(item => {
-                const shortCut = manager.getShortcut(item.name);
-                if(!shortCut){
-                    manager.addShortcut(item);
-                }else{
-                    if(!shortCut.hasOwnProperty('isGlobal')){
-                        shortCut.isGlobal = item.isGlobal;
-                        manager.updateShortcut(shortCut);
-                    }
+        CONS.SHORTCUT.forEach(item => {
+            const shortCut = tbsDbManager.getShortcut(item.name);
+            if(!shortCut){
+                tbsDbManager.addShortcut(item);
+            }else{
+                if(!shortCut.hasOwnProperty('isGlobal')){
+                    shortCut.isGlobal = item.isGlobal;
+                    tbsDbManager.updateShortcut(shortCut);
                 }
-            })
+            }
         })
     }
 
