@@ -73,11 +73,8 @@ class Utility {
             }
         })();`
     }
-
     static alterRequestHeader(view, headers){
         const session = view.webContents.session;
-        session.webRequest.onBeforeSendHeaders(null);
-
         session.webRequest.onBeforeSendHeaders((details, callback) => {
             const domains = ['google'];
             if(domains.some(domain => details.url.toLowerCase().includes(domain))){
