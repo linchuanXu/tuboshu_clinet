@@ -1,17 +1,9 @@
-// ================================
-// 浏览器指纹随机化器 v2.0 - 重构版
-// ================================
-
-// ================================
-// 1. 配置管理模块
-// ================================
 const CONFIG = {
   // 混淆程度等级配置
-  obfuscationLevel: 'light', // 'light' | 'medium' | 'heavy'
-  
-  // 指纹检测点配置 - 可按需启用/禁用
+  obfuscationLevel: 'medium', // 'light' | 'medium' | 'heavy'
+
   detectionPoints: {
-    userAgent: true,           // UserAgent 字符串
+    userAgent: false,           // UserAgent 字符串
     navigator: true,          // Navigator 属性
     screen: true,             // 屏幕信息
     timezone: true,           // 时区信息
@@ -37,9 +29,6 @@ const CONFIG = {
   debug: false
 };
 
-// ================================
-// 2. 工具函数模块
-// ================================
 const Utils = {
   // 基于种子的随机数生成器
   createSeededRandom(seed) {

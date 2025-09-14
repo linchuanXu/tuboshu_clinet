@@ -4,25 +4,11 @@ const paramEntry = process.argv.find(item => item.startsWith('--params='));
 const context = JSON.parse(paramEntry.substring(paramEntry.indexOf('=') + 1));
 const fingerPrint = context.fingerprint;
 
-// (async ()=>{
-//     await webFrame.executeJavaScript(`
-//         Object.defineProperties(screen,  {
-//             width: { value: ${fingerPrint.screen.width}  },
-//             height: { value: ${fingerPrint.screen.height}  }
-//         });
-//         Object.defineProperties(navigator,  {
-//             webdriver: {get:()=> ${fingerPrint.navigator.webdriver}},
-//             appVersion: {get:()=> "${fingerPrint.navigator.appVersion}"},
-//             userAgent: {get:()=> "${fingerPrint.navigator.userAgent}"},
-//             userAgentData: {get:()=> (${JSON.stringify(fingerPrint.navigator.userAgentData)})},
-//             languages: {get:()=> ${JSON.stringify(fingerPrint.navigator.languages)}},
-//             platform: {get:()=> "${fingerPrint.navigator.platform}"}
-//         });
-//     `)
-// })()
 (async ()=>{
     await webFrame.executeJavaScript(`
         Object.defineProperties(navigator,  {
+            webdriver: {get:()=> ${fingerPrint.navigator.webdriver}},
+            appVersion: {get:()=> "${fingerPrint.navigator.appVersion}"},
             userAgent: {get:()=> "${fingerPrint.navigator.userAgent}"},
             userAgentData: {get:()=> (${JSON.stringify(fingerPrint.navigator.userAgentData)})},
             languages: {get:()=> ${JSON.stringify(fingerPrint.navigator.languages)}},
